@@ -1,0 +1,54 @@
+{
+  "name": "msn-aim",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Papillon — an MSN Explorer-style all-in-one client for the modern internet, with AIM (OSCAR) instant messaging",
+  "main": "out/main/index.js",
+  "author": "brogwalkerh",
+  "license": "MIT",
+  "pnpm": {
+    "onlyBuiltDependencies": [
+      "electron",
+      "esbuild"
+    ]
+  },
+  "scripts": {
+    "dev": "electron-vite dev",
+    "dev:server": "docker compose -f docker/docker-compose.yml up -d",
+    "build": "electron-vite build",
+    "start": "electron-vite preview",
+    "typecheck": "tsc --noEmit -p tsconfig.json",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "test:integration": "vitest run --config vitest.integration.config.ts",
+    "package": "electron-vite build && electron-builder --dir",
+    "dist": "electron-vite build && electron-builder"
+  },
+  "devDependencies": {
+    "@types/mailparser": "^3.4.6",
+    "@types/node": "^22.10.0",
+    "@types/nodemailer": "^8.0.1",
+    "@types/react": "^18.3.12",
+    "@types/react-dom": "^18.3.1",
+    "@vitejs/plugin-react": "^4.3.4",
+    "electron": "^33.2.0",
+    "electron-builder": "^25.1.8",
+    "electron-vite": "^3.0.0",
+    "typescript": "^5.6.3",
+    "vite": "^6.0.3",
+    "vitest": "^2.1.8"
+  },
+  "dependencies": {
+    "@msn-aim/im-core": "workspace:*",
+    "@msn-aim/proto-msnp": "workspace:*",
+    "@msn-aim/proto-oscar": "workspace:*",
+    "@msn-aim/shared": "workspace:*",
+    "imapflow": "^1.0.171",
+    "mailparser": "^3.7.2",
+    "nodemailer": "^6.9.16",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1",
+    "rss-parser": "^3.13.0",
+    "zustand": "^5.0.2"
+  }
+}

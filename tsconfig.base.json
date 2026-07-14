@@ -1,0 +1,23 @@
+{
+  "compilerOptions": {
+    "target": "ES2022",
+    "module": "ESNext",
+    "moduleResolution": "bundler",
+    "lib": ["ES2022"],
+    "strict": true,
+    "noUncheckedIndexedAccess": true,
+    "noImplicitOverride": true,
+    "forceConsistentCasingInFileNames": true,
+    "esModuleInterop": true,
+    "skipLibCheck": true,
+    "resolveJsonModule": true,
+    "isolatedModules": true,
+    "noEmit": true,
+    "paths": {
+      "@msn-aim/shared": ["./packages/shared/src/index.ts"],
+      "@msn-aim/im-core": ["./packages/im-core/src/index.ts"],
+      "@msn-aim/proto-oscar": ["./packages/proto-oscar/src/index.ts"],
+      "@msn-aim/proto-msnp": ["./packages/proto-msnp/src/index.ts"]
+    }
+  }
+}
