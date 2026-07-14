@@ -1,0 +1,18 @@
+services:
+  oscar:
+    # Open OSCAR Server (formerly Retro AIM Server) — https://github.com/mk6i/open-oscar-server
+    image: ghcr.io/mk6i/retro-aim-server:latest
+    container_name: msn-aim-oscar
+    ports:
+      - '5190:5190' # OSCAR (auth/BOS/chat multiplexed)
+      - '8080:8080' # REST management API (create users, list sessions)
+    environment:
+      OSCAR_HOST: '127.0.0.1'
+      DISABLE_AUTH: 'true' # dev: any password works, accounts auto-created
+      LOG_LEVEL: 'info'
+    volumes:
+      - oscar-data:/app/data
+    restart: unless-stopped
+
+volumes:
+  oscar-data:
