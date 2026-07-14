@@ -1,0 +1,15 @@
+appId: dev.papillon.msn-aim
+productName: MSN-AIM Explorer
+directories:
+  output: release
+files:
+  - out/**
+  - package.json
+linux:
+  target: [AppImage]
+  category: Network
+mac:
+  target: [dmg]
+  category: public.app-category.social-networking
+win:
+  target: [nsis]

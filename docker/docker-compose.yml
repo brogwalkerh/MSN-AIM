@@ -1,17 +1,22 @@
 services:
   oscar:
     # Open OSCAR Server (formerly Retro AIM Server) — https://github.com/mk6i/open-oscar-server
+    # No docker? scripts/run-oscar-server.sh builds and runs it from source via Go.
     image: ghcr.io/mk6i/retro-aim-server:latest
     container_name: msn-aim-oscar
     ports:
       - '5190:5190' # OSCAR (auth/BOS/chat multiplexed)
       - '8080:8080' # REST management API (create users, list sessions)
     environment:
-      OSCAR_HOST: '127.0.0.1'
+      OSCAR_LISTENERS: 'LOCAL://0.0.0.0:5190'
+      OSCAR_ADVERTISED_LISTENERS_PLAIN: 'LOCAL://127.0.0.1:5190'
+      API_LISTENER: '0.0.0.0:8080'
+      TOC_LISTENERS: '0.0.0.0:9898'
       DISABLE_AUTH: 'true' # dev: any password works, accounts auto-created
+      DB_PATH: '/data/oscar.sqlite'
       LOG_LEVEL: 'info'
     volumes:
-      - oscar-data:/app/data
+      - oscar-data:/data
     restart: unless-stopped
 
 volumes:
