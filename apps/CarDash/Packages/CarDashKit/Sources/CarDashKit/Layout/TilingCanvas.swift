@@ -7,19 +7,18 @@ import CarDashCore
 /// The view does no layout arithmetic of its own. It asks `LayoutModel` for a solved
 /// arrangement at the size it has been given and places rectangles — which is why the
 /// interesting behaviour can be tested on Linux without a screen.
-public struct TilingCanvas<PaneContent: View>: View {
+public struct TilingCanvas: View {
     private let model: LayoutModel
-    private let paneContent: (Pane) -> PaneContent
+    private let services: AppServices
 
     @Environment(\.dashTheme) private var theme
 
-    public init(
-        model: LayoutModel,
-        @ViewBuilder paneContent: @escaping (Pane) -> PaneContent
-    ) {
+    public init(model: LayoutModel, services: AppServices) {
         self.model = model
-        self.paneContent = paneContent
+        self.services = services
     }
+
+    private var registry: SectionRegistry { services.registry }
 
     public var body: some View {
         GeometryReader { proxy in
@@ -57,16 +56,55 @@ public struct TilingCanvas<PaneContent: View>: View {
         if let rect = rendered.solution.rect(for: pane.id) {
             PaneChrome(
                 pane: pane,
+                title: registry.title(for: pane.sectionID),
+                sections: registry.pickerOrder,
                 isEditing: model.isEditing,
                 canSplit: model.canAddPane,
                 canRemove: rendered.solution.panes.count > 1,
                 onSplit: { model.split(pane.id, axis: $0, inserting: suggestedSection(for: rendered)) },
                 onReplace: { model.replace(pane.id, with: $0) },
                 onRemove: { model.remove(pane.id) },
-                content: { paneContent(pane) }
+                content: {
+                    paneContent(
+                        pane,
+                        size: rect.size,
+                        canvasClass: rendered.canvasClass
+                    )
+                }
             )
             .frame(width: rect.width, height: rect.height)
             .position(x: rect.center.x, y: rect.center.y)
+        }
+    }
+
+    @ViewBuilder
+    private func paneContent(
+        _ pane: Pane,
+        size: LayoutSize,
+        canvasClass: CanvasClass
+    ) -> some View {
+        let context = PaneContext(
+            paneID: pane.id,
+            services: services,
+            state: Binding(
+                get: { pane.state },
+                set: { model.setState($0, for: pane.id) }
+            ),
+            environment: PaneEnvironment(
+                size: size,
+                isEditing: model.isEditing,
+                canvasClass: canvasClass
+            )
+        )
+
+        if let descriptor = registry.descriptor(for: pane.sectionID) {
+            descriptor.makeView(context)
+        } else {
+            // A layout saved by a build that had a section this one does not. The
+            // document decoded fine; only this tile is unknown.
+            MissingSectionView(sectionID: pane.sectionID) {
+                model.replace(pane.id, with: registry.pickerOrder.first?.id ?? .clock)
+            }
         }
     }
 
@@ -77,6 +115,6 @@ public struct TilingCanvas<PaneContent: View>: View {
     /// gets it right often enough to save a trip through the replace menu.
     private func suggestedSection(for rendered: LayoutModel.RenderedLayout) -> SectionID {
         let inUse = Set(rendered.adapted.tree.sectionIDs)
-        return SectionCatalog.entries.first { !inUse.contains($0.id) }?.id ?? .clock
+        return registry.pickerOrder.first { !inUse.contains($0.id) }?.id ?? .clock
     }
 }

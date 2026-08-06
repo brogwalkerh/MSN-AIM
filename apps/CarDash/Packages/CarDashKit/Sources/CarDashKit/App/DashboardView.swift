@@ -5,22 +5,25 @@ import CarDashCore
 public struct DashboardView: View {
     /// Owned by `RootView` via `@State`; observed here, not owned.
     private let model: LayoutModel
+    private let services: AppServices
+
     @State private var showingLibrary = false
+    @State private var showingSettings = false
+    @Environment(\.scenePhase) private var scenePhase
 
-    @Environment(\.dashTheme) private var theme
-
-    public init(model: LayoutModel) {
+    public init(model: LayoutModel, services: AppServices) {
         self.model = model
+        self.services = services
     }
+
+    private var theme: DashTheme { services.theme.theme }
 
     public var body: some View {
         ZStack(alignment: .topTrailing) {
             theme.background.ignoresSafeArea()
 
-            TilingCanvas(model: model) { pane in
-                PanePlaceholderView(pane: pane)
-            }
-            .padding(LayoutMetrics.gutter)
+            TilingCanvas(model: model, services: services)
+                .padding(LayoutMetrics.gutter)
 
             controls
                 .padding(.top, 8)
@@ -29,9 +32,31 @@ public struct DashboardView: View {
             overflowRail
             refusalBanner
         }
-        .preferredColorScheme(.dark)
+        .environment(\.dashTheme, theme)
+        .preferredColorScheme(services.theme.isNight ? .dark : .light)
         .sheet(isPresented: $showingLibrary) {
-            LayoutLibrarySheet(model: model)
+            LayoutLibrarySheet(model: model, registry: services.registry)
+        }
+        .sheet(isPresented: $showingSettings) {
+            SettingsSheet(services: services)
+        }
+        .task {
+            services.start()
+        }
+        .onChange(of: services.location.coordinate) { _, coordinate in
+            services.positionChanged(to: coordinate)
+        }
+        .onChange(of: scenePhase) { _, phase in
+            // The sun moves while the app is backgrounded, and a drive can easily span
+            // sunset. Re-evaluating on return is cheaper than a running timer.
+            if phase == .active { services.theme.refresh() }
+        }
+        // Rearranging tiles while moving is the one interaction that has no business
+        // happening at speed, so it is not merely discouraged — it is switched off.
+        .onChange(of: services.location.isDriving) { _, isDriving in
+            if isDriving, model.isEditing {
+                withAnimation(.snappy) { model.isEditing = false }
+            }
         }
     }
 
@@ -50,23 +75,33 @@ public struct DashboardView: View {
                 .background(theme.tile, in: Capsule())
             }
 
-            circularButton(
-                systemImage: "square.grid.2x2",
-                label: "Layouts",
-                isOn: showingLibrary
-            ) {
+            circularButton(systemImage: "gearshape", label: "Settings", isOn: showingSettings) {
+                showingSettings = true
+            }
+
+            circularButton(systemImage: "square.grid.2x2", label: "Layouts", isOn: showingLibrary) {
                 showingLibrary = true
             }
 
-            circularButton(
-                systemImage: model.isEditing ? "checkmark" : "slider.horizontal.3",
-                label: model.isEditing ? "Done rearranging" : "Rearrange tiles",
-                isOn: model.isEditing
-            ) {
-                withAnimation(.snappy(duration: 0.25)) {
-                    model.isEditing.toggle()
+            if services.location.isDriving {
+                // Explains the missing control rather than leaving a gap where the
+                // rearrange button was.
+                Label("Driving", systemImage: "car.fill")
+                    .font(DashFont.label(12))
+                    .foregroundStyle(theme.secondaryText)
+                    .padding(.horizontal, 12)
+                    .frame(height: DashMetrics.minimumHitTarget)
+                    .background(theme.tile, in: Capsule())
+                    .accessibilityLabel("Rearranging is disabled while driving")
+            } else {
+                circularButton(
+                    systemImage: model.isEditing ? "checkmark" : "slider.horizontal.3",
+                    label: model.isEditing ? "Done rearranging" : "Rearrange tiles",
+                    isOn: model.isEditing
+                ) {
+                    withAnimation(.snappy(duration: 0.25)) { model.isEditing.toggle() }
+                    Haptics.edit()
                 }
-                Haptics.edit()
             }
         }
     }
@@ -106,8 +141,8 @@ public struct DashboardView: View {
                                 swapIn(pane.sectionID, using: rendered)
                             } label: {
                                 Label(
-                                    SectionCatalog.title(for: pane.sectionID),
-                                    systemImage: SectionCatalog.systemImage(for: pane.sectionID)
+                                    services.registry.title(for: pane.sectionID),
+                                    systemImage: services.registry.systemImage(for: pane.sectionID)
                                 )
                                 .font(DashFont.label())
                                 .foregroundStyle(theme.primaryText)

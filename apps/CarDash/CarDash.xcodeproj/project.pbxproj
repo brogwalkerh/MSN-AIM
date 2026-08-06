@@ -348,7 +348,10 @@
 			<key>name</key>
 			<string>CarDashTests</string>
 			<key>packageProductDependencies</key>
-			<array/>
+			<array>
+				<string>CD0000000000000000000028</string>
+				<string>CD0000000000000000000029</string>
+			</array>
 			<key>productName</key>
 			<string>CarDashTests</string>
 			<key>productReference</key>
@@ -420,7 +423,10 @@
 			<key>buildActionMask</key>
 			<string>2147483647</string>
 			<key>files</key>
-			<array/>
+			<array>
+				<string>CD000000000000000000002A</string>
+				<string>CD000000000000000000002B</string>
+			</array>
 			<key>runOnlyForDeploymentPostprocessing</key>
 			<string>0</string>
 		</dict>
@@ -511,6 +517,41 @@
 			<string>PBXBuildFile</string>
 			<key>productRef</key>
 			<string>CD000000000000000000001C</string>
+		</dict>
+
+		<!-- The test bundle links the packages too, so app-level tests can exercise the
+		     section registry and the views it produces. -->
+
+		<key>CD0000000000000000000028</key>
+		<dict>
+			<key>isa</key>
+			<string>XCSwiftPackageProductDependency</string>
+			<key>productName</key>
+			<string>CarDashCore</string>
+		</dict>
+
+		<key>CD0000000000000000000029</key>
+		<dict>
+			<key>isa</key>
+			<string>XCSwiftPackageProductDependency</string>
+			<key>productName</key>
+			<string>CarDashKit</string>
+		</dict>
+
+		<key>CD000000000000000000002A</key>
+		<dict>
+			<key>isa</key>
+			<string>PBXBuildFile</string>
+			<key>productRef</key>
+			<string>CD0000000000000000000028</string>
+		</dict>
+
+		<key>CD000000000000000000002B</key>
+		<dict>
+			<key>isa</key>
+			<string>PBXBuildFile</string>
+			<key>productRef</key>
+			<string>CD0000000000000000000029</string>
 		</dict>
 
 		<!-- ===== Configuration lists ========================================= -->

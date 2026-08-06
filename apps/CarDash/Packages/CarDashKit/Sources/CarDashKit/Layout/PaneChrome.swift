@@ -8,6 +8,8 @@ import CarDashCore
 /// put a remove button over the neighbouring map.
 struct PaneChrome<Content: View>: View {
     let pane: Pane
+    let title: String
+    let sections: [SectionDescriptor]
     let isEditing: Bool
     let canSplit: Bool
     let canRemove: Bool
@@ -42,7 +44,7 @@ struct PaneChrome<Content: View>: View {
             theme.background.opacity(0.55)
 
             VStack(spacing: 10) {
-                Text(SectionCatalog.title(for: pane.sectionID))
+                Text(title)
                     .font(DashFont.paneTitle)
                     .foregroundStyle(theme.primaryText)
                     .lineLimit(1)
@@ -75,14 +77,19 @@ struct PaneChrome<Content: View>: View {
 
     private var replaceMenu: some View {
         Menu {
-            ForEach(SectionCatalog.entries) { entry in
+            ForEach(sections) { section in
                 Button {
-                    onReplace(entry.id)
+                    onReplace(section.id)
                     Haptics.edit()
                 } label: {
-                    Label(entry.title, systemImage: entry.systemImage)
+                    // Sections that are not built yet stay in the list but say so,
+                    // rather than being silently absent or silently disappointing.
+                    Label(
+                        section.isComingSoon ? "\(section.title) (soon)" : section.title,
+                        systemImage: section.systemImage
+                    )
                 }
-                .disabled(entry.id == pane.sectionID)
+                .disabled(section.id == pane.sectionID)
             }
         } label: {
             controlLabel("arrow.left.arrow.right", tint: theme.primaryText)

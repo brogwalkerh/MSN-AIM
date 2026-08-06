@@ -4,6 +4,7 @@ import CarDashCore
 /// Switching between saved dashboards, and making new ones from the presets.
 struct LayoutLibrarySheet: View {
     let model: LayoutModel
+    let registry: SectionRegistry
 
     @Environment(\.dismiss) private var dismiss
     @State private var renaming: UUID?
@@ -106,7 +107,7 @@ struct LayoutLibrarySheet: View {
 
     private func summary(of document: LayoutDocument) -> String {
         let sections = document.variants.phoneLandscape.sectionIDs
-            .map { SectionCatalog.title(for: $0) }
+            .map { registry.title(for: $0) }
         let portrait = document.variants.phonePortrait == nil ? "" : " · custom portrait"
         return sections.joined(separator: ", ") + portrait
     }
