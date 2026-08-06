@@ -14,7 +14,7 @@ import os
 /// web-authentication sheet, and the Keychain.
 @MainActor
 @Observable
-public final class SpotifyAuthService: NSObject {
+public final class SpotifyAuthService {
     public enum State: Equatable {
         case notConfigured
         case signedOut
@@ -37,12 +37,14 @@ public final class SpotifyAuthService: NSObject {
     /// racing several against each other — each of which would rotate the refresh token
     /// and invalidate the others.
     @ObservationIgnored private var refreshTask: Task<String, Swift.Error>?
+    /// Held strongly because `ASWebAuthenticationSession.presentationContextProvider` is
+    /// weak; a provider that deallocates before the sheet appears means no sheet.
+    @ObservationIgnored private let anchorProvider = AuthPresentationAnchor()
     @ObservationIgnored private static let keychainKey = "spotify.tokens"
     @ObservationIgnored private static let log = Logger(subsystem: "dev.cardash", category: "spotify-auth")
 
     public init(clientID: String? = AppConfiguration.spotifyClientID) {
         self.clientID = clientID
-        super.init()
 
         guard clientID != nil else {
             state = .notConfigured
@@ -122,7 +124,7 @@ public final class SpotifyAuthService: NSObject {
                     continuation.resume(throwing: error ?? SpotifyAPIError.malformedResponse("no callback"))
                 }
             }
-            session.presentationContextProvider = self
+            session.presentationContextProvider = anchorProvider
             // Deliberately *not* ephemeral: reusing the Safari session means someone
             // already signed into Spotify on the phone taps once rather than typing a
             // password into a phone clamped to a windscreen.
@@ -249,10 +251,13 @@ public final class SpotifyAuthService: NSObject {
     }
 }
 
-extension SpotifyAuthService: ASWebAuthenticationPresentationContextProviding {
-    public nonisolated func presentationAnchor(
-        for session: ASWebAuthenticationSession
-    ) -> ASPresentationAnchor {
+/// Tells `ASWebAuthenticationSession` which window to hang the sheet from.
+///
+/// A separate object rather than a conformance on `SpotifyAuthService`, so that service
+/// need not inherit `NSObject` — `@Observable` on an `NSObject` subclass is a combination
+/// worth not relying on when every compile is a ten-minute CI round.
+private final class AuthPresentationAnchor: NSObject, ASWebAuthenticationPresentationContextProviding {
+    func presentationAnchor(for session: ASWebAuthenticationSession) -> ASPresentationAnchor {
         MainActor.assumeIsolated {
             let scene = UIApplication.shared.connectedScenes
                 .compactMap { $0 as? UIWindowScene }
