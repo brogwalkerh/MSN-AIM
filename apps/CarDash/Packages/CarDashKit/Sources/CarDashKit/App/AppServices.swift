@@ -14,6 +14,9 @@ public final class AppServices {
     public let theme: ThemeController
     public let weather: WeatherStore
     public let registry: SectionRegistry
+    public let route: RouteService
+    public let search: SearchService
+    public let announcer: NavigationAnnouncer
 
     public var unitSystem: UnitSystem {
         didSet {
@@ -25,19 +28,26 @@ public final class AppServices {
     @ObservationIgnored private let defaults: UserDefaults
     @ObservationIgnored private static let unitKey = "cardash.unitSystem"
 
+    /// Every dependency is optional rather than defaulted, because a default argument
+    /// expression is evaluated in a nonisolated context and none of these main-actor
+    /// types can be constructed there. Building them in the body is equivalent and
+    /// compiles.
     public init(
-        location: LocationService = LocationService(),
-        theme: ThemeController = ThemeController(),
+        location: LocationService? = nil,
+        theme: ThemeController? = nil,
         weather: WeatherStore? = nil,
-        registry: SectionRegistry = SectionRegistry(),
+        registry: SectionRegistry? = nil,
         defaults: UserDefaults = .standard
     ) {
-        self.location = location
-        self.theme = theme
+        self.location = location ?? LocationService()
+        self.theme = theme ?? ThemeController()
         self.weather = weather ?? WeatherStore(
             provider: CachingWeatherProvider(wrapping: OpenMeteoProvider())
         )
-        self.registry = registry
+        self.registry = registry ?? SectionRegistry()
+        self.route = RouteService()
+        self.search = SearchService()
+        self.announcer = NavigationAnnouncer()
         self.defaults = defaults
         self.unitSystem = defaults.string(forKey: Self.unitKey)
             .flatMap(UnitSystem.init(rawValue:))
@@ -55,9 +65,27 @@ public final class AppServices {
         theme.refresh()
     }
 
-    /// Called when a fix arrives, to keep the theme and the forecast tracking the car.
+    /// Called when a fix arrives.
+    ///
+    /// Navigation is driven from here rather than from the map tile, because a route
+    /// must keep running whether or not the map happens to be on screen — the driver may
+    /// well have swapped it for the music tile mid-journey.
     public func positionChanged(to coordinate: Coordinate?) {
         theme.updatePosition(coordinate)
+        guard let coordinate, let timestamp = location.updatedAt else { return }
+
+        search.setRegion(around: coordinate)
+
+        let fix = GeoFix(
+            coordinate: coordinate,
+            course: location.course,
+            speed: location.speed,
+            horizontalAccuracy: location.horizontalAccuracy,
+            timestamp: timestamp
+        )
+        for prompt in route.ingest(fix) {
+            announcer.announce(prompt)
+        }
     }
 }
 

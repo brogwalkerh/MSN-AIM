@@ -14,8 +14,11 @@ public final class SectionRegistry {
     /// Registration order, which is the order the picker offers them in.
     public private(set) var order: [SectionID] = []
 
-    public init(_ descriptors: [SectionDescriptor] = SectionRegistry.builtIn) {
-        for descriptor in descriptors {
+    /// Nil means the built-in set. It cannot be a default *argument* — default
+    /// expressions are evaluated in a nonisolated context, and `builtIn` is
+    /// main-actor-isolated like the rest of this class.
+    public init(_ descriptors: [SectionDescriptor]? = nil) {
+        for descriptor in descriptors ?? Self.builtIn {
             register(descriptor)
         }
     }
@@ -81,19 +84,6 @@ public final class SectionRegistry {
 // Real descriptors rather than a special case in the registry, so the picker, the
 // minimum-size policy and the preset validation all treat them uniformly. Each is
 // replaced in place when its phase lands.
-
-enum MapSection {
-    static var descriptor: SectionDescriptor {
-        .placeholder(
-            id: .map,
-            title: "Map",
-            systemImage: "map.fill",
-            blurb: "Your position, search, and turn-by-turn directions.",
-            arrivesIn: "Phase 3",
-            capabilities: [.needsLocation, .needsNetwork, .fullBleed, .singleton]
-        )
-    }
-}
 
 enum MusicSection {
     static var descriptor: SectionDescriptor {
