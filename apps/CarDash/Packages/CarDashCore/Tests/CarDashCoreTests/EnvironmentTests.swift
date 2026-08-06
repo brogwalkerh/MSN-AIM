@@ -109,17 +109,23 @@ struct SolarCalculatorTests {
 struct DrivingDetectorTests {
     private let start = Date(timeIntervalSince1970: 1_767_225_600)
 
+    // `#expect` evaluates its expression through a closure that receives the value
+    // immutably, so a mutating call cannot appear inside the macro. Every result below
+    // is therefore bound first — which reads better anyway.
+
     @Test("Starts parked, and moving off is immediate")
     func becomesDrivingAtOnce() {
         var detector = DrivingDetector()
         #expect(!detector.isDriving)
-        #expect(detector.update(speed: 5, at: start))
+        let moving = detector.update(speed: 5, at: start)
+        #expect(moving)
     }
 
     @Test("Walking pace does not count as driving")
     func walkingIsNotDriving() {
         var detector = DrivingDetector()
-        #expect(!detector.update(speed: 1.4, at: start))
+        let driving = detector.update(speed: 1.4, at: start)
+        #expect(!driving)
     }
 
     // The behaviour the hysteresis exists for. Stopping at a red light must not unlock
@@ -130,8 +136,8 @@ struct DrivingDetectorTests {
         _ = detector.update(speed: 12, at: start)
 
         for second in stride(from: 1.0, through: 10.0, by: 1.0) {
-            #expect(detector.update(speed: 0, at: start.addingTimeInterval(second)),
-                    "unlocked after only \(second)s stopped")
+            let stillDriving = detector.update(speed: 0, at: start.addingTimeInterval(second))
+            #expect(stillDriving, "unlocked after only \(second)s stopped")
         }
     }
 
@@ -140,7 +146,8 @@ struct DrivingDetectorTests {
         var detector = DrivingDetector()
         _ = detector.update(speed: 12, at: start)
         _ = detector.update(speed: 0, at: start.addingTimeInterval(1))
-        #expect(!detector.update(speed: 0, at: start.addingTimeInterval(30)))
+        let stillDriving = detector.update(speed: 0, at: start.addingTimeInterval(30))
+        #expect(!stillDriving)
     }
 
     @Test("Moving again resets the parking timer")
@@ -149,7 +156,8 @@ struct DrivingDetectorTests {
         _ = detector.update(speed: 12, at: start)
         _ = detector.update(speed: 0, at: start.addingTimeInterval(1))
         _ = detector.update(speed: 9, at: start.addingTimeInterval(5))
-        #expect(detector.update(speed: 0, at: start.addingTimeInterval(10)))
+        let stillDriving = detector.update(speed: 0, at: start.addingTimeInterval(10))
+        #expect(stillDriving)
     }
 
     // CoreLocation reports a negative speed when it has no valid measurement. Treating
@@ -159,8 +167,11 @@ struct DrivingDetectorTests {
     func unknownSpeedHoldsState(speed: Double?) {
         var detector = DrivingDetector()
         _ = detector.update(speed: 20, at: start)
-        #expect(detector.update(speed: speed, at: start.addingTimeInterval(60)))
-        #expect(detector.update(speed: speed, at: start.addingTimeInterval(600)))
+
+        let shortly = detector.update(speed: speed, at: start.addingTimeInterval(60))
+        let muchLater = detector.update(speed: speed, at: start.addingTimeInterval(600))
+        #expect(shortly)
+        #expect(muchLater)
     }
 
     @Test("Reset returns to parked")

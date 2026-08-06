@@ -130,8 +130,14 @@ struct TripMeterTests {
     @Test("Invalid coordinates are refused")
     func invalidCoordinates() {
         var meter = TripMeter()
-        #expect(!meter.record(coordinate: Coordinate(latitude: 999, longitude: 0),
-                              speed: 10, accuracy: 5, at: start))
+        // Bound first: `#expect` cannot contain a mutating call.
+        let accepted = meter.record(
+            coordinate: Coordinate(latitude: 999, longitude: 0),
+            speed: 10,
+            accuracy: 5,
+            at: start
+        )
+        #expect(!accepted)
         #expect(meter.distance == 0)
     }
 
