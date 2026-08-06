@@ -8,7 +8,7 @@ enum MusicSection {
             id: .music,
             title: "Music",
             systemImage: "music.note",
-            blurb: "Your library and your own files. Spotify arrives in Phase 5.",
+            blurb: "Spotify, your music library, and your own files.",
             capabilities: [.producesAudio, .singleton]
         ) { context in
             AnyView(MusicPaneView(context: context))
@@ -51,7 +51,7 @@ struct MusicPaneView: View {
 
     private var sourcePicker: some View {
         HStack(spacing: 6) {
-            ForEach([ProviderID.localFiles, .appleMusic], id: \.self) { provider in
+            ForEach([ProviderID.spotify, .appleMusic, .localFiles], id: \.self) { provider in
                 Button {
                     audio.send(.switchTo(provider))
                 } label: {
@@ -85,6 +85,8 @@ struct MusicPaneView: View {
     @ViewBuilder
     private var library: some View {
         switch audio.state.activeProvider {
+        case .spotify:
+            SpotifySourceView(provider: audio.spotify, audio: audio)
         case .appleMusic:
             appleMusicLibrary
         default:

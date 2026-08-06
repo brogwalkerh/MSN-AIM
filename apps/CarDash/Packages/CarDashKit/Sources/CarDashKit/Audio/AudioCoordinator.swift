@@ -16,6 +16,7 @@ public final class AudioCoordinator {
 
     public let localFiles = LocalFilesProvider()
     public let appleMusic = AppleMusicProvider()
+    public let spotify = SpotifyProvider()
 
     @ObservationIgnored private var machine = PlaybackStateMachine()
     @ObservationIgnored private let session = AudioSessionController()
@@ -26,7 +27,8 @@ public final class AudioCoordinator {
     public init() {
         providers = [
             .localFiles: localFiles,
-            .appleMusic: appleMusic
+            .appleMusic: appleMusic,
+            .spotify: spotify
         ]
 
         session.configure()

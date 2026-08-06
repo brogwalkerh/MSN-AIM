@@ -70,12 +70,21 @@
 	<key>NSMotionUsageDescription</key>
 	<string>CarDash uses motion data to show acceleration and cornering on the dashboard gauges.</string>
 
-	<!-- Required for the Spotify SDK. Without this entry canOpenURL("spotify:")
-	     returns false and authorization silently fails with no error worth reading. -->
+	<!-- Without this entry canOpenURL("spotify:") returns false, so the tile cannot tell
+	     "Spotify is not installed" from "Spotify is installed but not running" — and the
+	     offer to open Spotify, which is the fix for having no active device, silently
+	     does nothing. -->
 	<key>LSApplicationQueriesSchemes</key>
 	<array>
 		<string>spotify</string>
 	</array>
+
+	<!-- Supplied by Secrets.xcconfig, which is untracked. Empty in a fresh clone, and
+	     that is a supported state: the Spotify tile explains what to do and everything
+	     else works. PKCE means there is no client secret to go with it — a secret
+	     shipped inside an app is not a secret. -->
+	<key>SpotifyClientID</key>
+	<string>$(SPOTIFY_CLIENT_ID)</string>
 
 	<key>CFBundleURLTypes</key>
 	<array>

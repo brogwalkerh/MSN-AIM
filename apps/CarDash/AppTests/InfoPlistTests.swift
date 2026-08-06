@@ -69,6 +69,19 @@ struct InfoPlistTests {
         #expect(schemes.contains("cardash"), "redirect URI cardash://spotify-callback would not resolve")
     }
 
+    // The key must exist even when nobody has registered a Spotify app, because its
+    // absence and its emptiness mean different things to `AppConfiguration`: empty is
+    // "not configured yet", missing is "the plist entry was lost in a merge".
+    @Test("The Spotify client ID key is wired, whether or not it is filled in")
+    func spotifyClientID() throws {
+        let value = try #require(try info()["SpotifyClientID"] as? String)
+
+        // An unexpanded $(SPOTIFY_CLIENT_ID) would be sent to Spotify verbatim and come
+        // back as a generic invalid_client, pointing at the dashboard rather than at the
+        // build settings where the fault actually is.
+        #expect(!value.contains("$("), "unexpanded build setting: \(value)")
+    }
+
     @Test("Build-setting substitutions in Info.plist actually expanded")
     func substitutionsExpanded() throws {
         let identifier = try #require(try info()["CFBundleIdentifier"] as? String)
