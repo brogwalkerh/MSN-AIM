@@ -2,49 +2,49 @@ import SwiftUI
 import CarDashCore
 
 /// The app's root view.
-///
-/// Phase 0 deliberately renders almost nothing. Its job is to prove three things that
-/// cannot be checked on the development machine: that the hand-written Xcode project
-/// builds, that the local Swift packages resolve and link, and that `CarDashCore`'s
-/// geometry works at runtime on a real device. The tiling engine replaces this in
-/// Phase 1.
 public struct RootView: View {
-    public init() {}
+    @State private var model: LayoutModel
 
-    public var body: some View {
-        GeometryReader { proxy in
-            let canvas = LayoutRect(x: 0, y: 0, width: proxy.size.width, height: proxy.size.height)
-            // Exercising Core from the app is the point: if this draws two correctly
-            // proportioned tiles, the package graph is wired up.
-            let (left, right) = canvas.inset(by: 12).divided(along: .horizontal, fraction: 0.62, gutter: 12)
-
-            ZStack(alignment: .topLeading) {
-                Color.black.ignoresSafeArea()
-                placeholder("Map", subtitle: "Phase 3", rect: left)
-                placeholder("Music", subtitle: "Phase 4", rect: right)
-            }
-        }
-        .preferredColorScheme(.dark)
+    @MainActor
+    public init() {
+        // Falling back to an in-memory store means a phone that cannot write to
+        // Application Support — full disk, restricted container — still runs, with
+        // layouts that last until the app quits. Refusing to launch would be worse.
+        let store: any LayoutStore = (try? FileLayoutStore()) ?? InMemoryLayoutStore()
+        _model = State(initialValue: LayoutModel(store: store))
     }
 
-    private func placeholder(_ title: String, subtitle: String, rect: LayoutRect) -> some View {
-        RoundedRectangle(cornerRadius: 18, style: .continuous)
-            .fill(.white.opacity(0.06))
-            .overlay {
-                VStack(spacing: 6) {
-                    Text(title)
-                        .font(.system(size: 34, weight: .semibold, design: .rounded))
-                    Text(subtitle)
-                        .font(.system(size: 15, weight: .medium))
-                        .foregroundStyle(.secondary)
-                }
-                .foregroundStyle(.white)
-            }
-            .frame(width: rect.width, height: rect.height)
-            .offset(x: rect.minX, y: rect.minY)
+    /// For previews and tests.
+    @MainActor
+    public init(model: LayoutModel) {
+        _model = State(initialValue: model)
+    }
+
+    public var body: some View {
+        DashboardView(model: model)
+            .environment(\.dashTheme, .night)
     }
 }
 
-#Preview("Landscape", traits: .landscapeLeft) {
-    RootView()
+#Preview("Dashboard", traits: .landscapeLeft) {
+    RootView(model: previewModel())
+}
+
+#Preview("Rearranging", traits: .landscapeLeft) {
+    RootView(model: previewModel(editing: true))
+}
+
+#Preview("Portrait (adapted)") {
+    RootView(model: previewModel(tree: LayoutPresets.quad))
+}
+
+@MainActor
+private func previewModel(
+    tree: LayoutTree = LayoutPresets.navigationFocus,
+    editing: Bool = false
+) -> LayoutModel {
+    let document = LayoutDocument(name: "Preview", tree: tree, now: Date())
+    let model = LayoutModel(store: InMemoryLayoutStore([document]))
+    model.isEditing = editing
+    return model
 }

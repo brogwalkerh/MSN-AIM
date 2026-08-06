@@ -24,6 +24,7 @@ let package = Package(
         .testTarget(
             name: "CarDashCoreTests",
             dependencies: ["CarDashCore"],
+            resources: [.copy("Fixtures")],
             swiftSettings: [.swiftLanguageMode(.v6)]
         )
     ]

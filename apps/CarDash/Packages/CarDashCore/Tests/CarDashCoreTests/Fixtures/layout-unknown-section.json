@@ -1,0 +1,35 @@
+{
+  "schemaVersion" : 1,
+  "id" : "aaaaaaaa-1111-4111-8111-111111111111",
+  "name" : "From a build that had a section this one does not",
+  "createdAt" : "2026-01-01T00:00:00Z",
+  "modifiedAt" : "2026-01-01T00:00:00Z",
+  "variants" : {
+    "phoneLandscape" : {
+      "root" : {
+        "kind" : "split",
+        "split" : {
+          "id" : "bbbbbbbb-2222-4222-8222-222222222222",
+          "axis" : "horizontal",
+          "fraction" : 0.5,
+          "first" : {
+            "kind" : "pane",
+            "pane" : {
+              "id" : "cccccccc-3333-4333-8333-333333333333",
+              "sectionID" : "map",
+              "state" : ""
+            }
+          },
+          "second" : {
+            "kind" : "pane",
+            "pane" : {
+              "id" : "dddddddd-4444-4444-8444-444444444444",
+              "sectionID" : "tirePressure",
+              "state" : "eyJ1bml0IjoicHNpIn0="
+            }
+          }
+        }
+      }
+    }
+  }
+}
