@@ -3,7 +3,12 @@ name: CI
 on:
   push:
     branches: ['**']
+    # apps/ holds an unrelated iOS project with its own workflow (ios.yml). Nothing
+    # under it is visible to pnpm, so running the Node jobs for those commits only
+    # burns minutes.
+    paths-ignore: ['apps/**']
   pull_request:
+    paths-ignore: ['apps/**']
 
 jobs:
   check:

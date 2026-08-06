@@ -136,3 +136,15 @@ There is no Mac in the development loop, so CI is the only oracle
 Things CI structurally cannot check, and which need a real device: Spotify App Remote
 behaviour, GPS and route quality, audio handoff between apps, thermals, and anything
 involving the lock screen.
+
+### Working on this without a Mac
+
+The two Linux jobs exist to keep the feedback loop short. `project-file` catches
+pbxproj and Info.plist mistakes in seconds, and `core` compiles and tests the whole
+layout engine in about 45 seconds — both before the macOS runner has finished checking
+out. In practice almost every mistake surfaces there, and the macOS job is confirmation
+rather than discovery.
+
+The corollary is that anything worth testing should be pushed *down* into `CarDashCore`
+where possible. A rule of thumb that has held so far: if a bug could be described
+without mentioning a view, it belongs in Core with a test.
