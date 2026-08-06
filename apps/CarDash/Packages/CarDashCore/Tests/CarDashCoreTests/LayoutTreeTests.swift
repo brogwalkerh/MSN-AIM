@@ -249,15 +249,15 @@ struct LayoutTreeTests {
         let (tree, log) = RandomLayout.tree(seed: seed, operations: 16)
         let context = "seed \(seed): \(log.joined(separator: "; "))"
 
-        #expect(tree.paneCount >= 1, context)
-        #expect(tree.paneCount == tree.panes.count, context)
+        #expect(tree.paneCount >= 1, "\(context)")
+        #expect(tree.paneCount == tree.panes.count, "\(context)")
         #expect(Set(tree.paneIDs).count == tree.paneIDs.count, "duplicate pane ids. \(context)")
         #expect(Set(tree.splits.map(\.id)).count == tree.splits.count, "duplicate divider ids. \(context)")
         // A binary tree with n leaves has exactly n-1 internal nodes. If this ever fails,
         // a mutation has left a split with a missing or duplicated child.
-        #expect(tree.splits.count == tree.paneCount - 1, context)
+        #expect(tree.splits.count == tree.paneCount - 1, "\(context)")
         for split in tree.splits {
-            #expect(split.fraction > 0 && split.fraction < 1, context)
+            #expect(split.fraction > 0 && split.fraction < 1, "\(context)")
         }
     }
 }
