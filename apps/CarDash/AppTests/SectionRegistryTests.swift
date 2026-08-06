@@ -1,4 +1,5 @@
 import Foundation
+import SwiftUI
 import Testing
 import CarDashCore
 // Not @testable: everything asserted here is public API. Keeping it a plain import
@@ -72,9 +73,16 @@ struct SectionRegistryTests {
 
     @Test("The picker leads with sections that actually do something")
     func pickerOrdersReadySectionsFirst() {
-        let ready = registry.pickerOrder.prefix { !$0.isComingSoon }
+        let order = registry.pickerOrder
+        let ready = order.prefix { !$0.isComingSoon }
+        // Bound outside the macro: `allSatisfy` is rethrows, and inside #expect's
+        // expansion that reads as a throwing call in a non-throwing context.
+        let remainderIsAllComingSoon = order
+            .drop(while: { !$0.isComingSoon })
+            .allSatisfy(\.isComingSoon)
+
         #expect(!ready.isEmpty)
-        #expect(registry.pickerOrder.drop(while: { !$0.isComingSoon }).allSatisfy(\.isComingSoon))
+        #expect(remainderIsAllComingSoon)
     }
 
     @Test("An unknown identifier resolves to nothing rather than a wrong tile")
