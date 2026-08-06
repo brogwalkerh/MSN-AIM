@@ -41,6 +41,70 @@ struct GeoMathTests {
         #expect(abs(GeoMath.bearing(from: origin, to: Coordinate(latitude: 0, longitude: -1)) - 270) < 0.5)
     }
 
+    // MARK: - Projection
+
+    @Test("A point beside a segment projects onto it at the right offset")
+    func projectionBesideSegment() {
+        let start = Coordinate(latitude: 51.5, longitude: -0.1)
+        let end = TestRoute.offset(start, north: 1000)
+        // 300 m along, 40 m to the east of the line.
+        let point = TestRoute.offset(TestRoute.offset(start, north: 300), east: 40)
+
+        let projection = GeoMath.project(point, onto: start, end)
+        #expect(abs(projection.distanceAlongSegment - 300) < 2)
+        #expect(abs(projection.crossTrackDistance - 40) < 2)
+        #expect(projection.t > 0.29 && projection.t < 0.31)
+    }
+
+    // Clamping matters: without it, a point beyond the end of a segment reports a
+    // projection past the segment and the route position runs ahead of the car.
+    @Test("A point past the end clamps to the end")
+    func projectionClampsBeyondEnd() {
+        let start = Coordinate(latitude: 51.5, longitude: -0.1)
+        let end = TestRoute.offset(start, north: 100)
+        let beyond = TestRoute.offset(start, north: 500)
+
+        let projection = GeoMath.project(beyond, onto: start, end)
+        #expect(projection.t == 1)
+        #expect(abs(projection.distanceAlongSegment - 100) < 1)
+        #expect(abs(projection.crossTrackDistance - 400) < 3, "distance to the segment's end")
+    }
+
+    @Test("A point before the start clamps to the start")
+    func projectionClampsBeforeStart() {
+        let start = Coordinate(latitude: 51.5, longitude: -0.1)
+        let end = TestRoute.offset(start, north: 100)
+        let before = TestRoute.offset(start, north: -50)
+
+        let projection = GeoMath.project(before, onto: start, end)
+        #expect(projection.t == 0)
+        #expect(projection.distanceAlongSegment == 0)
+        #expect(abs(projection.crossTrackDistance - 50) < 2)
+    }
+
+    @Test("A point on the segment has no cross-track error")
+    func projectionOnTheLine() {
+        let start = Coordinate(latitude: 51.5, longitude: -0.1)
+        let end = TestRoute.offset(start, north: 800)
+        let onLine = TestRoute.offset(start, north: 500)
+
+        let projection = GeoMath.project(onLine, onto: start, end)
+        #expect(projection.crossTrackDistance < 0.5)
+        #expect(GeoMath.distance(from: projection.coordinate, to: onLine) < 0.5)
+    }
+
+    // Route geometry from a real router does contain repeated points.
+    @Test("A zero-length segment does not divide by zero")
+    func degenerateSegment() {
+        let point = Coordinate(latitude: 51.5, longitude: -0.1)
+        let projection = GeoMath.project(TestRoute.offset(point, east: 10), onto: point, point)
+
+        #expect(projection.t == 0)
+        #expect(projection.distanceAlongSegment == 0)
+        #expect(abs(projection.crossTrackDistance - 10) < 1)
+        #expect(projection.coordinate == point)
+    }
+
     // The naive subtraction gets this wrong, and it is the calculation behind "are we
     // off route" and every rotating compass.
     @Test("Heading deltas take the short way round north")
