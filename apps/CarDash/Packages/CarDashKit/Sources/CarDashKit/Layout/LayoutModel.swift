@@ -125,7 +125,9 @@ public final class LayoutModel {
 
     public func split(_ paneID: PaneID, axis: SplitAxis, inserting sectionID: SectionID) {
         edit { tree in
-            try tree.split(
+            // Explicitly discarded: `edit` takes a Void-returning closure, and leaving
+            // the returned PaneID as the body's value invites an inference mismatch.
+            _ = try tree.split(
                 paneID,
                 axis: axis,
                 inserting: sectionID,
