@@ -17,6 +17,7 @@ public final class AppServices {
     public let route: RouteService
     public let search: SearchService
     public let announcer: NavigationAnnouncer
+    public let audio: AudioCoordinator
 
     public var unitSystem: UnitSystem {
         didSet {
@@ -48,6 +49,7 @@ public final class AppServices {
         self.route = RouteService()
         self.search = SearchService()
         self.announcer = NavigationAnnouncer()
+        self.audio = AudioCoordinator()
         self.defaults = defaults
         self.unitSystem = defaults.string(forKey: Self.unitKey)
             .flatMap(UnitSystem.init(rawValue:))

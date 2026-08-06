@@ -85,32 +85,6 @@ public final class SectionRegistry {
 // minimum-size policy and the preset validation all treat them uniformly. Each is
 // replaced in place when its phase lands.
 
-enum MusicSection {
-    static var descriptor: SectionDescriptor {
-        .placeholder(
-            id: .music,
-            title: "Music",
-            systemImage: "music.note",
-            blurb: "Spotify, your Apple Music library, YouTube, or your own files.",
-            arrivesIn: "Phase 4",
-            capabilities: [.producesAudio, .needsNetwork, .singleton]
-        )
-    }
-}
-
-enum NowPlayingSection {
-    static var descriptor: SectionDescriptor {
-        .placeholder(
-            id: .nowPlaying,
-            title: "Now Playing",
-            systemImage: "waveform",
-            blurb: "A compact transport bar for whatever is playing.",
-            arrivesIn: "Phase 4",
-            capabilities: [.singleton]
-        )
-    }
-}
-
 enum PhoneSection {
     static var descriptor: SectionDescriptor {
         .placeholder(
