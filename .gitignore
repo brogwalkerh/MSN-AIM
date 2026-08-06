@@ -9,3 +9,11 @@ playwright-report/
 coverage/
 docker/data/
 *.local
+
+# apps/CarDash (Xcode / SwiftPM)
+apps/**/DerivedData/
+apps/**/.build/
+apps/**/.swiftpm/
+apps/**/xcuserdata/
+apps/**/*.xcuserdatad
+apps/**/Secrets.xcconfig

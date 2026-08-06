@@ -1,0 +1,72 @@
+// Base.xcconfig — shared build settings for every target and configuration.
+//
+// Settings live here rather than in project.pbxproj deliberately. A value set in the
+// pbxproj *overrides* the xcconfig, so keeping the project file's buildSettings nearly
+// empty makes this the single place anything is changed — and keeps the hand-written
+// pbxproj small enough to be trustworthy.
+//
+// Secrets.xcconfig is included LAST, at the bottom of this file, so its assignments
+// win. That ordering is load-bearing: xcconfig is last-assignment-wins and includes are
+// inlined textually, so including it at the top would let the defaults below silently
+// clobber the real values.
+
+// MARK: - Platform
+
+IPHONEOS_DEPLOYMENT_TARGET = 26.0
+SDKROOT = iphoneos
+TARGETED_DEVICE_FAMILY = 1,2
+
+// This app is iPhone/iPad only. MapKit, AVAudioSession and CoreMotion usage here is
+// not written with Catalyst or "Designed for iPad" runtimes in mind, so those
+// destinations are turned off rather than left to fail confusingly later.
+SUPPORTS_MACCATALYST = NO
+SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = NO
+SUPPORTS_XR_DESIGNED_FOR_IPHONE_IPAD = NO
+
+// MARK: - Swift
+
+// Swift 5 language mode for the app and test targets. CarDashCore opts up to Swift 6
+// strict concurrency in its own Package.swift, where it is cheap because everything is
+// a pure value type. See the note in Packages/CarDashKit/Package.swift for why the
+// framework-facing code has not followed yet.
+SWIFT_VERSION = 5.0
+SWIFT_EMIT_LOC_STRINGS = YES
+
+// MARK: - Language and warnings
+
+GCC_C_LANGUAGE_STANDARD = gnu17
+CLANG_ENABLE_MODULES = YES
+CLANG_ENABLE_OBJC_ARC = YES
+ALWAYS_SEARCH_USER_PATHS = NO
+ENABLE_STRICT_OBJC_MSGSEND = YES
+ENABLE_USER_SCRIPT_SANDBOXING = YES
+GCC_WARN_UNDECLARED_SELECTOR = YES
+GCC_WARN_UNUSED_FUNCTION = YES
+GCC_WARN_UNUSED_VARIABLE = YES
+CLANG_WARN_DOCUMENTATION_COMMENTS = YES
+
+// MARK: - Signing
+
+// Empty by default so simulator builds and CI (which pass CODE_SIGNING_ALLOWED=NO)
+// work with no configuration at all. Fill DEVELOPMENT_TEAM in Secrets.xcconfig to
+// install on a device.
+CODE_SIGN_STYLE = Automatic
+DEVELOPMENT_TEAM =
+
+// MARK: - App identity
+
+CARDASH_BUNDLE_ID = com.brogwalkerh.cardash
+CARDASH_URL_SCHEME = cardash
+MARKETING_VERSION = 0.1.0
+CURRENT_PROJECT_VERSION = 1
+
+// MARK: - Third-party credentials
+//
+// Overridden by Secrets.xcconfig. An empty client ID is a supported state: the Spotify
+// section reports itself unavailable rather than crashing, so the rest of the dashboard
+// works before any of the developer-portal chores are done.
+SPOTIFY_CLIENT_ID =
+
+// MARK: - Local overrides (must stay last)
+
+#include? "Secrets.xcconfig"

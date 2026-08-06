@@ -1,0 +1,117 @@
+# CarDash (apps/CarDash) — the iOS app in this repo.
+#
+# This workflow is the *only* way the iOS app is verified: it is developed on Linux with
+# no macOS, no Xcode and no Swift toolchain, so nothing here can be checked before it is
+# pushed. It is deliberately tiered:
+#
+#   project-file — seconds, free. Catches hand-authoring mistakes in the pbxproj before
+#                  anything queues for a macOS runner.
+#   core         — free Linux minutes, ~1 min, runs the real logic tests. CarDashCore is
+#                  Foundation-only precisely so this job can exist.
+#   ios          — macOS minutes, slow, proves the hand-written Xcode project builds and
+#                  links, and runs the app-level tests on a simulator.
+#
+# Path-filtered so it never runs for changes to the Electron project, and ci.yml is left
+# completely alone.
+name: iOS
+
+on:
+  push:
+    paths:
+      - 'apps/**'
+      - '.github/workflows/ios.yml'
+  pull_request:
+    paths:
+      - 'apps/**'
+      - '.github/workflows/ios.yml'
+
+concurrency:
+  group: ios-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  project-file:
+    name: Project file integrity
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Validate project.pbxproj and plists
+        run: python3 apps/CarDash/Scripts/validate_project.py
+
+  core:
+    name: CarDashCore (Linux)
+    runs-on: ubuntu-latest
+    container: swift:6.2-noble
+    defaults:
+      run:
+        working-directory: apps/CarDash/Packages/CarDashCore
+    steps:
+      - uses: actions/checkout@v4
+      - name: Swift version
+        run: swift --version
+      - name: Build
+        run: swift build -v
+      - name: Test
+        run: swift test -v
+
+  ios:
+    name: App (macOS, Xcode)
+    # Pinned rather than macos-latest: macos-latest moves to macos-26 mid-2026, and an
+    # unannounced image flip is exactly the kind of failure that is impossible to
+    # diagnose from a machine with no Mac on it.
+    runs-on: macos-26
+    defaults:
+      run:
+        working-directory: apps/CarDash
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Select Xcode
+        run: |
+          if [ -d /Applications/Xcode_26.6.app ]; then
+            sudo xcode-select -s /Applications/Xcode_26.6.app/Contents/Developer
+          fi
+          xcodebuild -version
+          swift --version
+
+      - uses: actions/cache@v4
+        with:
+          path: ~/Library/Caches/org.swift.swiftpm
+          key: spm-${{ runner.os }}-${{ hashFiles('apps/CarDash/Packages/*/Package.swift') }}
+          restore-keys: spm-${{ runner.os }}-
+
+      # Its own step so a dependency or network failure is immediately distinguishable
+      # from a compile failure.
+      - name: Resolve packages
+        run: xcodebuild -resolvePackageDependencies -project CarDash.xcodeproj -scheme CarDash
+
+      - name: Build (generic simulator)
+        run: |
+          set -o pipefail
+          if command -v xcbeautify >/dev/null 2>&1; then FILTER=xcbeautify; else FILTER=cat; fi
+          xcodebuild build \
+            -project CarDash.xcodeproj \
+            -scheme CarDash \
+            -destination 'generic/platform=iOS Simulator' \
+            -configuration Debug \
+            CODE_SIGNING_ALLOWED=NO | $FILTER
+
+      # Resolve a concrete UDID rather than passing `name=iPhone 17,OS=latest`.
+      # Hardcoded device/OS strings are the classic "Unable to find a destination
+      # matching the provided destination specifier" failure when the image drifts.
+      - name: Pick a simulator
+        id: sim
+        run: |
+          UDID=$(python3 Scripts/pick_simulator.py)
+          echo "Using simulator $UDID"
+          echo "udid=$UDID" >> "$GITHUB_OUTPUT"
+
+      - name: Test
+        run: |
+          set -o pipefail
+          if command -v xcbeautify >/dev/null 2>&1; then FILTER=xcbeautify; else FILTER=cat; fi
+          xcodebuild test \
+            -project CarDash.xcodeproj \
+            -scheme CarDash \
+            -destination "platform=iOS Simulator,id=${{ steps.sim.outputs.udid }}" \
+            CODE_SIGNING_ALLOWED=NO | $FILTER

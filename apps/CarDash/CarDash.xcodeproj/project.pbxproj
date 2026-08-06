@@ -1,0 +1,730 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<!--
+	Hand-written Xcode project.
+
+	This file is authored as an XML property list rather than Xcode's usual OpenStep
+	format. xcodebuild and Xcode parse both, and XML is far safer to write by hand: no
+	brace balancing, no quoting rules, no comment conventions to get subtly wrong. Xcode
+	will rewrite this into OpenStep format the first time the project is opened and
+	saved — that is expected. Commit that diff and carry on; after it happens, OpenStep
+	is canonical.
+
+	It stays small because of two decisions:
+
+	  1. `App` and `AppTests` are PBXFileSystemSynchronizedRootGroup entries ("buildable
+	     folders", Xcode 16+). They reference a *directory*. Every file inside is
+	     discovered and compiled automatically, so adding a Swift file NEVER requires
+	     touching this file — there are no PBXFileReference or PBXBuildFile objects to
+	     maintain per source file.
+
+	  2. Almost all code lives in the two local Swift packages under Packages/, reached
+	     through a single XCLocalSwiftPackageReference each. Dependencies are declared in
+	     those packages' Package.swift, not here.
+
+	  3. Build settings live in Supporting/Base.xcconfig. Settings written here would
+	     override the xcconfig, so the buildSettings dictionaries below hold only what
+	     genuinely differs per target or per configuration.
+
+	Object identifiers are sequential and human-assigned (CD…0001 upward) rather than the
+	random 96-bit values Xcode generates. Xcode does not care, and it makes this file
+	reviewable.
+-->
+<plist version="1.0">
+<dict>
+	<key>archiveVersion</key>
+	<string>1</string>
+	<key>classes</key>
+	<dict/>
+	<key>objectVersion</key>
+	<string>77</string>
+	<key>objects</key>
+	<dict>
+
+		<!-- ===== Project ===================================================== -->
+
+		<key>CD0000000000000000000001</key>
+		<dict>
+			<key>isa</key>
+			<string>PBXProject</string>
+			<key>attributes</key>
+			<dict>
+				<key>BuildIndependentTargetsInParallel</key>
+				<string>1</string>
+				<key>LastSwiftUpdateCheck</key>
+				<string>2600</string>
+				<key>LastUpgradeCheck</key>
+				<string>2600</string>
+				<key>TargetAttributes</key>
+				<dict>
+					<key>CD0000000000000000000002</key>
+					<dict>
+						<key>CreatedOnToolsVersion</key>
+						<string>26.0</string>
+					</dict>
+					<key>CD0000000000000000000003</key>
+					<dict>
+						<key>CreatedOnToolsVersion</key>
+						<string>26.0</string>
+						<key>TestTargetID</key>
+						<string>CD0000000000000000000002</string>
+					</dict>
+				</dict>
+			</dict>
+			<key>buildConfigurationList</key>
+			<string>CD0000000000000000000010</string>
+			<key>compatibilityVersion</key>
+			<string>Xcode 15.0</string>
+			<key>preferredProjectObjectVersion</key>
+			<string>77</string>
+			<key>developmentRegion</key>
+			<string>en</string>
+			<key>hasScannedForEncodings</key>
+			<string>0</string>
+			<key>knownRegions</key>
+			<array>
+				<string>en</string>
+				<string>Base</string>
+			</array>
+			<key>mainGroup</key>
+			<string>CD0000000000000000000004</string>
+			<key>minimizedProjectReferenceProxies</key>
+			<string>1</string>
+			<key>packageReferences</key>
+			<array>
+				<string>CD0000000000000000000019</string>
+				<string>CD000000000000000000001A</string>
+			</array>
+			<key>productRefGroup</key>
+			<string>CD0000000000000000000005</string>
+			<key>projectDirPath</key>
+			<string></string>
+			<key>projectRoot</key>
+			<string></string>
+			<key>targets</key>
+			<array>
+				<string>CD0000000000000000000002</string>
+				<string>CD0000000000000000000003</string>
+			</array>
+		</dict>
+
+		<!-- ===== Groups ====================================================== -->
+
+		<key>CD0000000000000000000004</key>
+		<dict>
+			<key>isa</key>
+			<string>PBXGroup</string>
+			<key>children</key>
+			<array>
+				<string>CD0000000000000000000027</string>
+				<string>CD0000000000000000000008</string>
+				<string>CD0000000000000000000009</string>
+				<string>CD0000000000000000000022</string>
+				<string>CD0000000000000000000005</string>
+			</array>
+			<key>sourceTree</key>
+			<string>&lt;group&gt;</string>
+		</dict>
+
+		<key>CD0000000000000000000005</key>
+		<dict>
+			<key>isa</key>
+			<string>PBXGroup</string>
+			<key>children</key>
+			<array>
+				<string>CD0000000000000000000006</string>
+				<string>CD0000000000000000000007</string>
+			</array>
+			<key>name</key>
+			<string>Products</string>
+			<key>sourceTree</key>
+			<string>&lt;group&gt;</string>
+		</dict>
+
+		<!--
+			Supporting/ is a plain group, NOT a buildable folder. Info.plist, the
+			entitlements file and the xcconfigs are referenced by *build setting paths*
+			(INFOPLIST_FILE, CODE_SIGN_ENTITLEMENTS, baseConfigurationReference), which
+			resolve without any target membership. Making this a synchronized folder
+			would sweep all four files into the app's Resources phase, shipping the
+			xcconfigs inside the bundle and duplicating Info.plist.
+		-->
+		<key>CD0000000000000000000022</key>
+		<dict>
+			<key>isa</key>
+			<string>PBXGroup</string>
+			<key>children</key>
+			<array>
+				<string>CD0000000000000000000024</string>
+				<string>CD0000000000000000000025</string>
+				<string>CD0000000000000000000023</string>
+				<string>CD0000000000000000000026</string>
+			</array>
+			<key>path</key>
+			<string>Supporting</string>
+			<key>sourceTree</key>
+			<string>&lt;group&gt;</string>
+		</dict>
+
+		<!-- ===== Buildable folders ========================================== -->
+
+		<key>CD0000000000000000000008</key>
+		<dict>
+			<key>isa</key>
+			<string>PBXFileSystemSynchronizedRootGroup</string>
+			<key>explicitFileTypes</key>
+			<dict/>
+			<key>explicitFolders</key>
+			<array/>
+			<key>path</key>
+			<string>App</string>
+			<key>sourceTree</key>
+			<string>&lt;group&gt;</string>
+		</dict>
+
+		<key>CD0000000000000000000009</key>
+		<dict>
+			<key>isa</key>
+			<string>PBXFileSystemSynchronizedRootGroup</string>
+			<key>explicitFileTypes</key>
+			<dict/>
+			<key>explicitFolders</key>
+			<array/>
+			<key>path</key>
+			<string>AppTests</string>
+			<key>sourceTree</key>
+			<string>&lt;group&gt;</string>
+		</dict>
+
+		<!-- ===== File references ============================================ -->
+
+		<key>CD0000000000000000000006</key>
+		<dict>
+			<key>isa</key>
+			<string>PBXFileReference</string>
+			<key>explicitFileType</key>
+			<string>wrapper.application</string>
+			<key>includeInIndex</key>
+			<string>0</string>
+			<key>path</key>
+			<string>CarDash.app</string>
+			<key>sourceTree</key>
+			<string>BUILT_PRODUCTS_DIR</string>
+		</dict>
+
+		<key>CD0000000000000000000007</key>
+		<dict>
+			<key>isa</key>
+			<string>PBXFileReference</string>
+			<key>explicitFileType</key>
+			<string>wrapper.cfbundle</string>
+			<key>includeInIndex</key>
+			<string>0</string>
+			<key>path</key>
+			<string>CarDashTests.xctest</string>
+			<key>sourceTree</key>
+			<string>BUILT_PRODUCTS_DIR</string>
+		</dict>
+
+		<key>CD0000000000000000000023</key>
+		<dict>
+			<key>isa</key>
+			<string>PBXFileReference</string>
+			<key>lastKnownFileType</key>
+			<string>text.xcconfig</string>
+			<key>path</key>
+			<string>Base.xcconfig</string>
+			<key>sourceTree</key>
+			<string>&lt;group&gt;</string>
+		</dict>
+
+		<key>CD0000000000000000000024</key>
+		<dict>
+			<key>isa</key>
+			<string>PBXFileReference</string>
+			<key>lastKnownFileType</key>
+			<string>text.plist.xml</string>
+			<key>path</key>
+			<string>Info.plist</string>
+			<key>sourceTree</key>
+			<string>&lt;group&gt;</string>
+		</dict>
+
+		<key>CD0000000000000000000025</key>
+		<dict>
+			<key>isa</key>
+			<string>PBXFileReference</string>
+			<key>lastKnownFileType</key>
+			<string>text.plist.entitlements</string>
+			<key>path</key>
+			<string>CarDash.entitlements</string>
+			<key>sourceTree</key>
+			<string>&lt;group&gt;</string>
+		</dict>
+
+		<key>CD0000000000000000000026</key>
+		<dict>
+			<key>isa</key>
+			<string>PBXFileReference</string>
+			<key>lastKnownFileType</key>
+			<string>text.xcconfig</string>
+			<key>path</key>
+			<string>Secrets.example.xcconfig</string>
+			<key>sourceTree</key>
+			<string>&lt;group&gt;</string>
+		</dict>
+
+		<key>CD0000000000000000000027</key>
+		<dict>
+			<key>isa</key>
+			<string>PBXFileReference</string>
+			<key>lastKnownFileType</key>
+			<string>net.daringfireball.markdown</string>
+			<key>path</key>
+			<string>README.md</string>
+			<key>sourceTree</key>
+			<string>&lt;group&gt;</string>
+		</dict>
+
+		<!-- ===== Targets ===================================================== -->
+
+		<key>CD0000000000000000000002</key>
+		<dict>
+			<key>isa</key>
+			<string>PBXNativeTarget</string>
+			<key>buildConfigurationList</key>
+			<string>CD0000000000000000000011</string>
+			<key>buildPhases</key>
+			<array>
+				<string>CD000000000000000000000A</string>
+				<string>CD000000000000000000000B</string>
+				<string>CD000000000000000000000C</string>
+			</array>
+			<key>buildRules</key>
+			<array/>
+			<key>dependencies</key>
+			<array/>
+			<key>fileSystemSynchronizedGroups</key>
+			<array>
+				<string>CD0000000000000000000008</string>
+			</array>
+			<key>name</key>
+			<string>CarDash</string>
+			<key>packageProductDependencies</key>
+			<array>
+				<string>CD000000000000000000001B</string>
+				<string>CD000000000000000000001C</string>
+			</array>
+			<key>productName</key>
+			<string>CarDash</string>
+			<key>productReference</key>
+			<string>CD0000000000000000000006</string>
+			<key>productType</key>
+			<string>com.apple.product-type.application</string>
+		</dict>
+
+		<key>CD0000000000000000000003</key>
+		<dict>
+			<key>isa</key>
+			<string>PBXNativeTarget</string>
+			<key>buildConfigurationList</key>
+			<string>CD0000000000000000000012</string>
+			<key>buildPhases</key>
+			<array>
+				<string>CD000000000000000000000D</string>
+				<string>CD000000000000000000000E</string>
+				<string>CD000000000000000000000F</string>
+			</array>
+			<key>buildRules</key>
+			<array/>
+			<key>dependencies</key>
+			<array>
+				<string>CD000000000000000000001F</string>
+			</array>
+			<key>fileSystemSynchronizedGroups</key>
+			<array>
+				<string>CD0000000000000000000009</string>
+			</array>
+			<key>name</key>
+			<string>CarDashTests</string>
+			<key>packageProductDependencies</key>
+			<array/>
+			<key>productName</key>
+			<string>CarDashTests</string>
+			<key>productReference</key>
+			<string>CD0000000000000000000007</string>
+			<key>productType</key>
+			<string>com.apple.product-type.bundle.unit-test</string>
+		</dict>
+
+		<!-- ===== Build phases ================================================ -->
+		<!-- All `files` arrays are empty by design: buildable folders populate the
+		     sources and resources phases implicitly, and the frameworks phase is fed by
+		     packageProductDependencies below. -->
+
+		<key>CD000000000000000000000A</key>
+		<dict>
+			<key>isa</key>
+			<string>PBXSourcesBuildPhase</string>
+			<key>buildActionMask</key>
+			<string>2147483647</string>
+			<key>files</key>
+			<array/>
+			<key>runOnlyForDeploymentPostprocessing</key>
+			<string>0</string>
+		</dict>
+
+		<key>CD000000000000000000000B</key>
+		<dict>
+			<key>isa</key>
+			<string>PBXFrameworksBuildPhase</string>
+			<key>buildActionMask</key>
+			<string>2147483647</string>
+			<key>files</key>
+			<array>
+				<string>CD000000000000000000001D</string>
+				<string>CD000000000000000000001E</string>
+			</array>
+			<key>runOnlyForDeploymentPostprocessing</key>
+			<string>0</string>
+		</dict>
+
+		<key>CD000000000000000000000C</key>
+		<dict>
+			<key>isa</key>
+			<string>PBXResourcesBuildPhase</string>
+			<key>buildActionMask</key>
+			<string>2147483647</string>
+			<key>files</key>
+			<array/>
+			<key>runOnlyForDeploymentPostprocessing</key>
+			<string>0</string>
+		</dict>
+
+		<key>CD000000000000000000000D</key>
+		<dict>
+			<key>isa</key>
+			<string>PBXSourcesBuildPhase</string>
+			<key>buildActionMask</key>
+			<string>2147483647</string>
+			<key>files</key>
+			<array/>
+			<key>runOnlyForDeploymentPostprocessing</key>
+			<string>0</string>
+		</dict>
+
+		<key>CD000000000000000000000E</key>
+		<dict>
+			<key>isa</key>
+			<string>PBXFrameworksBuildPhase</string>
+			<key>buildActionMask</key>
+			<string>2147483647</string>
+			<key>files</key>
+			<array/>
+			<key>runOnlyForDeploymentPostprocessing</key>
+			<string>0</string>
+		</dict>
+
+		<key>CD000000000000000000000F</key>
+		<dict>
+			<key>isa</key>
+			<string>PBXResourcesBuildPhase</string>
+			<key>buildActionMask</key>
+			<string>2147483647</string>
+			<key>files</key>
+			<array/>
+			<key>runOnlyForDeploymentPostprocessing</key>
+			<string>0</string>
+		</dict>
+
+		<!-- ===== Target dependency (tests → app) ============================= -->
+
+		<key>CD000000000000000000001F</key>
+		<dict>
+			<key>isa</key>
+			<string>PBXTargetDependency</string>
+			<key>target</key>
+			<string>CD0000000000000000000002</string>
+			<key>targetProxy</key>
+			<string>CD0000000000000000000020</string>
+		</dict>
+
+		<key>CD0000000000000000000020</key>
+		<dict>
+			<key>isa</key>
+			<string>PBXContainerItemProxy</string>
+			<key>containerPortal</key>
+			<string>CD0000000000000000000001</string>
+			<key>proxyType</key>
+			<string>1</string>
+			<key>remoteGlobalIDString</key>
+			<string>CD0000000000000000000002</string>
+			<key>remoteInfo</key>
+			<string>CarDash</string>
+		</dict>
+
+		<!-- ===== Swift packages ============================================== -->
+
+		<key>CD0000000000000000000019</key>
+		<dict>
+			<key>isa</key>
+			<string>XCLocalSwiftPackageReference</string>
+			<key>relativePath</key>
+			<string>Packages/CarDashCore</string>
+		</dict>
+
+		<key>CD000000000000000000001A</key>
+		<dict>
+			<key>isa</key>
+			<string>XCLocalSwiftPackageReference</string>
+			<key>relativePath</key>
+			<string>Packages/CarDashKit</string>
+		</dict>
+
+		<key>CD000000000000000000001B</key>
+		<dict>
+			<key>isa</key>
+			<string>XCSwiftPackageProductDependency</string>
+			<key>productName</key>
+			<string>CarDashCore</string>
+		</dict>
+
+		<key>CD000000000000000000001C</key>
+		<dict>
+			<key>isa</key>
+			<string>XCSwiftPackageProductDependency</string>
+			<key>productName</key>
+			<string>CarDashKit</string>
+		</dict>
+
+		<key>CD000000000000000000001D</key>
+		<dict>
+			<key>isa</key>
+			<string>PBXBuildFile</string>
+			<key>productRef</key>
+			<string>CD000000000000000000001B</string>
+		</dict>
+
+		<key>CD000000000000000000001E</key>
+		<dict>
+			<key>isa</key>
+			<string>PBXBuildFile</string>
+			<key>productRef</key>
+			<string>CD000000000000000000001C</string>
+		</dict>
+
+		<!-- ===== Configuration lists ========================================= -->
+
+		<key>CD0000000000000000000010</key>
+		<dict>
+			<key>isa</key>
+			<string>XCConfigurationList</string>
+			<key>buildConfigurations</key>
+			<array>
+				<string>CD0000000000000000000013</string>
+				<string>CD0000000000000000000014</string>
+			</array>
+			<key>defaultConfigurationIsVisible</key>
+			<string>0</string>
+			<key>defaultConfigurationName</key>
+			<string>Release</string>
+		</dict>
+
+		<key>CD0000000000000000000011</key>
+		<dict>
+			<key>isa</key>
+			<string>XCConfigurationList</string>
+			<key>buildConfigurations</key>
+			<array>
+				<string>CD0000000000000000000015</string>
+				<string>CD0000000000000000000016</string>
+			</array>
+			<key>defaultConfigurationIsVisible</key>
+			<string>0</string>
+			<key>defaultConfigurationName</key>
+			<string>Release</string>
+		</dict>
+
+		<key>CD0000000000000000000012</key>
+		<dict>
+			<key>isa</key>
+			<string>XCConfigurationList</string>
+			<key>buildConfigurations</key>
+			<array>
+				<string>CD0000000000000000000017</string>
+				<string>CD0000000000000000000018</string>
+			</array>
+			<key>defaultConfigurationIsVisible</key>
+			<string>0</string>
+			<key>defaultConfigurationName</key>
+			<string>Release</string>
+		</dict>
+
+		<!-- ===== Project build configurations ================================ -->
+
+		<key>CD0000000000000000000013</key>
+		<dict>
+			<key>isa</key>
+			<string>XCBuildConfiguration</string>
+			<key>baseConfigurationReference</key>
+			<string>CD0000000000000000000023</string>
+			<key>buildSettings</key>
+			<dict>
+				<key>DEBUG_INFORMATION_FORMAT</key>
+				<string>dwarf</string>
+				<key>ENABLE_TESTABILITY</key>
+				<string>YES</string>
+				<key>GCC_OPTIMIZATION_LEVEL</key>
+				<string>0</string>
+				<key>GCC_PREPROCESSOR_DEFINITIONS</key>
+				<array>
+					<string>DEBUG=1</string>
+					<string>$(inherited)</string>
+				</array>
+				<key>MTL_ENABLE_DEBUG_INFO</key>
+				<string>INCLUDE_SOURCE</string>
+				<key>ONLY_ACTIVE_ARCH</key>
+				<string>YES</string>
+				<key>SWIFT_ACTIVE_COMPILATION_CONDITIONS</key>
+				<string>DEBUG $(inherited)</string>
+				<key>SWIFT_OPTIMIZATION_LEVEL</key>
+				<string>-Onone</string>
+			</dict>
+			<key>name</key>
+			<string>Debug</string>
+		</dict>
+
+		<key>CD0000000000000000000014</key>
+		<dict>
+			<key>isa</key>
+			<string>XCBuildConfiguration</string>
+			<key>baseConfigurationReference</key>
+			<string>CD0000000000000000000023</string>
+			<key>buildSettings</key>
+			<dict>
+				<key>DEBUG_INFORMATION_FORMAT</key>
+				<string>dwarf-with-dsym</string>
+				<key>ENABLE_NS_ASSERTIONS</key>
+				<string>NO</string>
+				<key>MTL_ENABLE_DEBUG_INFO</key>
+				<string>NO</string>
+				<key>SWIFT_COMPILATION_MODE</key>
+				<string>wholemodule</string>
+				<key>VALIDATE_PRODUCT</key>
+				<string>YES</string>
+			</dict>
+			<key>name</key>
+			<string>Release</string>
+		</dict>
+
+		<!-- ===== App target build configurations ============================= -->
+
+		<key>CD0000000000000000000015</key>
+		<dict>
+			<key>isa</key>
+			<string>XCBuildConfiguration</string>
+			<key>buildSettings</key>
+			<dict>
+				<key>ASSETCATALOG_COMPILER_APPICON_NAME</key>
+				<string>AppIcon</string>
+				<key>ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME</key>
+				<string>AccentColor</string>
+				<key>CODE_SIGN_ENTITLEMENTS</key>
+				<string>Supporting/CarDash.entitlements</string>
+				<key>GENERATE_INFOPLIST_FILE</key>
+				<string>NO</string>
+				<key>INFOPLIST_FILE</key>
+				<string>Supporting/Info.plist</string>
+				<key>LD_RUNPATH_SEARCH_PATHS</key>
+				<array>
+					<string>$(inherited)</string>
+					<string>@executable_path/Frameworks</string>
+				</array>
+				<key>PRODUCT_BUNDLE_IDENTIFIER</key>
+				<string>$(CARDASH_BUNDLE_ID)</string>
+				<key>PRODUCT_NAME</key>
+				<string>CarDash</string>
+			</dict>
+			<key>name</key>
+			<string>Debug</string>
+		</dict>
+
+		<key>CD0000000000000000000016</key>
+		<dict>
+			<key>isa</key>
+			<string>XCBuildConfiguration</string>
+			<key>buildSettings</key>
+			<dict>
+				<key>ASSETCATALOG_COMPILER_APPICON_NAME</key>
+				<string>AppIcon</string>
+				<key>ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME</key>
+				<string>AccentColor</string>
+				<key>CODE_SIGN_ENTITLEMENTS</key>
+				<string>Supporting/CarDash.entitlements</string>
+				<key>GENERATE_INFOPLIST_FILE</key>
+				<string>NO</string>
+				<key>INFOPLIST_FILE</key>
+				<string>Supporting/Info.plist</string>
+				<key>LD_RUNPATH_SEARCH_PATHS</key>
+				<array>
+					<string>$(inherited)</string>
+					<string>@executable_path/Frameworks</string>
+				</array>
+				<key>PRODUCT_BUNDLE_IDENTIFIER</key>
+				<string>$(CARDASH_BUNDLE_ID)</string>
+				<key>PRODUCT_NAME</key>
+				<string>CarDash</string>
+			</dict>
+			<key>name</key>
+			<string>Release</string>
+		</dict>
+
+		<!-- ===== Test target build configurations ============================ -->
+
+		<key>CD0000000000000000000017</key>
+		<dict>
+			<key>isa</key>
+			<string>XCBuildConfiguration</string>
+			<key>buildSettings</key>
+			<dict>
+				<key>BUNDLE_LOADER</key>
+				<string>$(TEST_HOST)</string>
+				<key>GENERATE_INFOPLIST_FILE</key>
+				<string>YES</string>
+				<key>PRODUCT_BUNDLE_IDENTIFIER</key>
+				<string>$(CARDASH_BUNDLE_ID).tests</string>
+				<key>PRODUCT_NAME</key>
+				<string>$(TARGET_NAME)</string>
+				<key>TEST_HOST</key>
+				<string>$(BUILT_PRODUCTS_DIR)/CarDash.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/CarDash</string>
+			</dict>
+			<key>name</key>
+			<string>Debug</string>
+		</dict>
+
+		<key>CD0000000000000000000018</key>
+		<dict>
+			<key>isa</key>
+			<string>XCBuildConfiguration</string>
+			<key>buildSettings</key>
+			<dict>
+				<key>BUNDLE_LOADER</key>
+				<string>$(TEST_HOST)</string>
+				<key>GENERATE_INFOPLIST_FILE</key>
+				<string>YES</string>
+				<key>PRODUCT_BUNDLE_IDENTIFIER</key>
+				<string>$(CARDASH_BUNDLE_ID).tests</string>
+				<key>PRODUCT_NAME</key>
+				<string>$(TARGET_NAME)</string>
+				<key>TEST_HOST</key>
+				<string>$(BUILT_PRODUCTS_DIR)/CarDash.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/CarDash</string>
+			</dict>
+			<key>name</key>
+			<string>Release</string>
+		</dict>
+
+	</dict>
+	<key>rootObject</key>
+	<string>CD0000000000000000000001</string>
+</dict>
+</plist>

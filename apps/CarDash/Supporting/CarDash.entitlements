@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<!-- Deliberately empty.
+
+	     com.apple.developer.weatherkit is added in Phase 9, and not before: requesting
+	     an entitlement that has not been enabled on the App ID in the developer portal
+	     makes automatic signing fail, which would block every build for a feature that
+	     is not written yet. Phase 2's weather section uses Open-Meteo, which needs no
+	     entitlement at all.
+
+	     No CarPlay entitlement is requested. See the README — the tiling dashboard
+	     cannot exist inside CarPlay's template system, so the entitlement would buy
+	     nothing even if Apple granted it. -->
+</dict>
+</plist>

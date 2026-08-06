@@ -1,0 +1,90 @@
+# XcodeGen fallback — NOT the source of truth.
+#
+# CarDash.xcodeproj/project.pbxproj is hand-written and committed, and that is what
+# Xcode and CI use. This file exists only as insurance: the project file was authored on
+# a machine with no macOS and no Xcode, so if it ever fails to open in a way that cannot
+# be diagnosed from CI logs, regenerate it on a Mac:
+#
+#     brew install xcodegen
+#     cd apps/CarDash && xcodegen generate
+#
+# ...then commit the result. Keep this spec semantically in step with the pbxproj.
+#
+# Note: this spec lists `App` and `AppTests` as ordinary source directories rather than
+# Xcode 16 buildable folders, so XcodeGen enumerates each file individually. The
+# resulting project builds identically; it just means the regenerated pbxproj is larger
+# and needs re-running whenever files are added.
+
+name: CarDash
+options:
+  bundleIdPrefix: com.brogwalkerh
+  deploymentTarget:
+    iOS: "26.0"
+  createIntermediateGroups: true
+  developmentLanguage: en
+
+configs:
+  Debug: debug
+  Release: release
+
+fileGroups:
+  - Supporting
+  - README.md
+
+packages:
+  CarDashCore:
+    path: Packages/CarDashCore
+  CarDashKit:
+    path: Packages/CarDashKit
+
+targets:
+  CarDash:
+    type: application
+    platform: iOS
+    sources:
+      - path: App
+    configFiles:
+      Debug: Supporting/Base.xcconfig
+      Release: Supporting/Base.xcconfig
+    settings:
+      base:
+        INFOPLIST_FILE: Supporting/Info.plist
+        GENERATE_INFOPLIST_FILE: NO
+        CODE_SIGN_ENTITLEMENTS: Supporting/CarDash.entitlements
+        PRODUCT_BUNDLE_IDENTIFIER: $(CARDASH_BUNDLE_ID)
+        PRODUCT_NAME: CarDash
+        ASSETCATALOG_COMPILER_APPICON_NAME: AppIcon
+        ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME: AccentColor
+    dependencies:
+      - package: CarDashCore
+        product: CarDashCore
+      - package: CarDashKit
+        product: CarDashKit
+
+  CarDashTests:
+    type: bundle.unit-test
+    platform: iOS
+    sources:
+      - path: AppTests
+    configFiles:
+      Debug: Supporting/Base.xcconfig
+      Release: Supporting/Base.xcconfig
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: $(CARDASH_BUNDLE_ID).tests
+    dependencies:
+      - target: CarDash
+
+schemes:
+  CarDash:
+    build:
+      targets:
+        CarDash: all
+    test:
+      config: Debug
+      targets:
+        - CarDashTests
+    run:
+      config: Debug
+    archive:
+      config: Release

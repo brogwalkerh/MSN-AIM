@@ -66,6 +66,14 @@ pnpm dist                 # installers via electron-builder
 Repo layout, process/IPC rules, and testing layers: [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md).
 OSCAR wire-format crib sheet: [docs/OSCAR-NOTES.md](docs/OSCAR-NOTES.md).
 
+## Also in this repo
+
+[`apps/CarDash`](apps/CarDash) is an unrelated project that happens to share the
+repository: a native iOS app (SwiftUI, iOS 26+) that turns a car-mounted iPhone into a
+tileable dashboard — map, music, gauges — for cars without CarPlay. It has its own
+toolchain and its own CI workflow, and shares no code with the Electron app above.
+`pnpm install`, `pnpm typecheck` and `pnpm test` do not see it.
+
 ## Legal
 
 This is a stylistic homage, not a copy: all artwork (butterfly, icons, skin) is original
