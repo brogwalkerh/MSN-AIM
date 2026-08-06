@@ -1,0 +1,32 @@
+{
+  "device": {
+    "id": null,
+    "is_active": true,
+    "is_private_session": false,
+    "is_restricted": true,
+    "name": "Living room TV",
+    "type": "TV",
+    "volume_percent": null,
+    "supports_volume": false
+  },
+  "repeat_state": "context",
+  "shuffle_state": false,
+  "timestamp": 1754464000000,
+  "progress_ms": 15000,
+  "is_playing": false,
+  "item": {
+    "album": {
+      "album_type": "compilation",
+      "name": null,
+      "images": []
+    },
+    "artists": [],
+    "duration_ms": null,
+    "id": null,
+    "is_local": true,
+    "name": "track01",
+    "type": "track",
+    "uri": "spotify:local:::track01:212"
+  },
+  "currently_playing_type": "track"
+}

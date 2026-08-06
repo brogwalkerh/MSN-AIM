@@ -1,0 +1,55 @@
+{
+  "href": "https://api.spotify.com/v1/me/player/recently-played?limit=20",
+  "limit": 20,
+  "next": "https://api.spotify.com/v1/me/player/recently-played?before=1754463600000&limit=20",
+  "cursors": { "after": "1754463600000", "before": "1754460000000" },
+  "items": [
+    {
+      "track": {
+        "album": {
+          "name": "Rumours",
+          "images": [
+            { "url": "https://i.scdn.co/image/aaa640", "height": 640, "width": 640 },
+            { "url": "https://i.scdn.co/image/aaa300", "height": 300, "width": 300 }
+          ]
+        },
+        "artists": [{ "name": "Fleetwood Mac" }],
+        "duration_ms": 257693,
+        "id": "0ofHAoxe9vBkTCp2UQIavz",
+        "name": "Dreams",
+        "uri": "spotify:track:0ofHAoxe9vBkTCp2UQIavz"
+      },
+      "played_at": "2025-08-06T07:00:00.123Z",
+      "context": { "type": "playlist", "uri": "spotify:playlist:3cEYpjA9oz9GiPac4AsH4n" }
+    },
+    {
+      "track": {
+        "album": { "name": "Innervisions", "images": [] },
+        "artists": [{ "name": "Stevie Wonder" }],
+        "duration_ms": 209000,
+        "id": "1h2xVEoJORqrg71HocgqXd",
+        "name": "Higher Ground",
+        "uri": "spotify:track:1h2xVEoJORqrg71HocgqXd"
+      },
+      "played_at": "2025-08-06T06:55:30Z",
+      "context": null
+    },
+    {
+      "track": {
+        "album": { "name": "Rumours", "images": [] },
+        "artists": [{ "name": "Fleetwood Mac" }],
+        "duration_ms": 257693,
+        "id": "0ofHAoxe9vBkTCp2UQIavz",
+        "name": "Dreams",
+        "uri": "spotify:track:0ofHAoxe9vBkTCp2UQIavz"
+      },
+      "played_at": "2025-08-06T06:50:00.000Z",
+      "context": null
+    },
+    {
+      "track": null,
+      "played_at": "2025-08-06T06:45:00.000Z",
+      "context": null
+    }
+  ]
+}

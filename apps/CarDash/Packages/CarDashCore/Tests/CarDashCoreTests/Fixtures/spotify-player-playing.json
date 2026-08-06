@@ -1,0 +1,50 @@
+{
+  "device": {
+    "id": "0d1841b0976bae2a3a310dd74c0f3df354899bc8",
+    "is_active": true,
+    "is_private_session": false,
+    "is_restricted": false,
+    "name": "Kitchen speaker",
+    "type": "Speaker",
+    "volume_percent": 54,
+    "supports_volume": true
+  },
+  "repeat_state": "off",
+  "shuffle_state": false,
+  "context": {
+    "type": "playlist",
+    "href": "https://api.spotify.com/v1/playlists/37i9dQZF1DXcBWIGoYBM5M",
+    "uri": "spotify:playlist:37i9dQZF1DXcBWIGoYBM5M"
+  },
+  "timestamp": 1754463600000,
+  "progress_ms": 72500,
+  "is_playing": true,
+  "item": {
+    "album": {
+      "album_type": "album",
+      "name": "Rumours",
+      "images": [
+        { "url": "https://i.scdn.co/image/aaa640", "height": 640, "width": 640 },
+        { "url": "https://i.scdn.co/image/aaa300", "height": 300, "width": 300 },
+        { "url": "https://i.scdn.co/image/aaa064", "height": 64, "width": 64 }
+      ],
+      "release_date": "1977-02-04",
+      "uri": "spotify:album:1bt6q2SruMsBtcerNVtpZB"
+    },
+    "artists": [
+      { "name": "Fleetwood Mac", "uri": "spotify:artist:08GQAI4eElDnROBrJRGE0X" },
+      { "name": "Stevie Nicks", "uri": "spotify:artist:2fCXsRFYaSaAYOqIA9U1RN" }
+    ],
+    "disc_number": 1,
+    "duration_ms": 257693,
+    "explicit": false,
+    "id": "0ofHAoxe9vBkTCp2UQIavz",
+    "name": "Dreams",
+    "popularity": 84,
+    "track_number": 2,
+    "type": "track",
+    "uri": "spotify:track:0ofHAoxe9vBkTCp2UQIavz"
+  },
+  "currently_playing_type": "track",
+  "actions": { "disallows": { "resuming": true } }
+}

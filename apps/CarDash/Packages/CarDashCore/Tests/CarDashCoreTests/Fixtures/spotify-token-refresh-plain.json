@@ -1,0 +1,6 @@
+{
+  "access_token": "BQD_third_access_token",
+  "token_type": "Bearer",
+  "expires_in": 3600,
+  "scope": "user-read-playback-state user-modify-playback-state user-read-currently-playing user-read-recently-played playlist-read-private playlist-read-collaborative"
+}

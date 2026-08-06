@@ -1,0 +1,38 @@
+{
+  "devices": [
+    {
+      "id": "b9a1c0f2e77d4e21a4b6c0d3f8e5a7b1c2d3e4f5",
+      "is_active": false,
+      "is_private_session": false,
+      "is_restricted": false,
+      "name": "Brogan's iPhone",
+      "type": "Smartphone",
+      "volume_percent": 100,
+      "supports_volume": true
+    },
+    {
+      "id": "0d1841b0976bae2a3a310dd74c0f3df354899bc8",
+      "is_active": true,
+      "is_private_session": false,
+      "is_restricted": false,
+      "name": "Kitchen speaker",
+      "type": "Speaker",
+      "volume_percent": 54,
+      "supports_volume": true
+    },
+    {
+      "id": null,
+      "is_active": false,
+      "is_private_session": false,
+      "is_restricted": true,
+      "name": "Living room TV",
+      "type": "TV",
+      "volume_percent": null,
+      "supports_volume": false
+    },
+    {
+      "id": "c7f3b2118de94a6f9d0e5c4a3b2f1e0d9c8b7a65",
+      "name": "Sparse cast target"
+    }
+  ]
+}

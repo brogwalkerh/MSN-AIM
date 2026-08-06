@@ -1,0 +1,21 @@
+{
+  "device": {
+    "id": "b9a1c0f2e77d4e21a4b6c0d3f8e5a7b1c2d3e4f5",
+    "is_active": true,
+    "is_private_session": false,
+    "is_restricted": false,
+    "name": "Brogan's iPhone",
+    "type": "Smartphone",
+    "volume_percent": 100,
+    "supports_volume": true
+  },
+  "repeat_state": "off",
+  "shuffle_state": true,
+  "context": null,
+  "timestamp": 1754463900000,
+  "progress_ms": 4000,
+  "is_playing": true,
+  "item": null,
+  "currently_playing_type": "ad",
+  "actions": { "disallows": { "skipping_prev": true, "pausing": true } }
+}

@@ -1,0 +1,60 @@
+{
+  "href": "https://api.spotify.com/v1/me/playlists?offset=0&limit=20",
+  "limit": 20,
+  "next": null,
+  "offset": 0,
+  "previous": null,
+  "total": 4,
+  "items": [
+    {
+      "collaborative": false,
+      "description": "The ones that survive the motorway",
+      "id": "3cEYpjA9oz9GiPac4AsH4n",
+      "images": [
+        { "url": "https://i.scdn.co/image/pl640", "height": 640, "width": 640 },
+        { "url": "https://i.scdn.co/image/pl300", "height": 300, "width": 300 }
+      ],
+      "name": "Driving",
+      "owner": { "display_name": "Brogan", "id": "brogwalkerh" },
+      "public": false,
+      "tracks": { "href": "https://api.spotify.com/v1/playlists/3cEYpjA9oz9GiPac4AsH4n/tracks", "total": 137 },
+      "type": "playlist",
+      "uri": "spotify:playlist:3cEYpjA9oz9GiPac4AsH4n"
+    },
+    {
+      "collaborative": true,
+      "description": "",
+      "id": "1AVZz0mBuGbCEoNRQdYQju",
+      "images": null,
+      "name": null,
+      "owner": { "display_name": null, "id": "spotify" },
+      "public": true,
+      "tracks": { "total": 0 },
+      "type": "playlist",
+      "uri": "spotify:playlist:1AVZz0mBuGbCEoNRQdYQju"
+    },
+    {
+      "collaborative": false,
+      "description": "A playlist Spotify could not resolve",
+      "id": null,
+      "images": [],
+      "name": "Broken",
+      "owner": { "display_name": "Ghost" },
+      "tracks": null,
+      "type": "playlist",
+      "uri": null
+    },
+    {
+      "collaborative": false,
+      "id": "37i9dQZF1DXcBWIGoYBM5M",
+      "images": [
+        { "url": "https://i.scdn.co/image/tk64", "height": 64, "width": 64 }
+      ],
+      "name": "Today's Top Hits",
+      "owner": { "display_name": "Spotify" },
+      "tracks": { "total": 50 },
+      "type": "playlist",
+      "uri": "spotify:playlist:37i9dQZF1DXcBWIGoYBM5M"
+    }
+  ]
+}
