@@ -56,7 +56,7 @@ public enum SolarCalculator {
         let cosHourAngle = (sin(radians(horizonAngle)) - sin(latitude) * sin(declination))
             / (cos(latitude) * cos(declination))
 
-        let transit = date(fromJulian: transitJulian)
+        let transit = instant(fromJulian: transitJulian)
 
         // Above the arctic or below the antarctic circle the sun may never rise or never
         // set. The sign of the impossible cosine says which.
@@ -73,8 +73,8 @@ public enum SolarCalculator {
 
         let hourAngle = degrees(acos(cosHourAngle))
         return Events(
-            sunrise: date(fromJulian: transitJulian - hourAngle / 360),
-            sunset: date(fromJulian: transitJulian + hourAngle / 360),
+            sunrise: instant(fromJulian: transitJulian - hourAngle / 360),
+            sunset: instant(fromJulian: transitJulian + hourAngle / 360),
             transit: transit,
             isPolarDay: false,
             isPolarNight: false
@@ -108,7 +108,7 @@ public enum SolarCalculator {
         date.timeIntervalSince1970 / 86_400 + 2_440_587.5
     }
 
-    private static func date(fromJulian julian: Double) -> Date {
+    private static func instant(fromJulian julian: Double) -> Date {
         Date(timeIntervalSince1970: (julian - 2_440_587.5) * 86_400)
     }
 }

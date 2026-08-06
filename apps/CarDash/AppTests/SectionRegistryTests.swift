@@ -1,7 +1,9 @@
 import Foundation
 import Testing
 import CarDashCore
-@testable import CarDashKit
+// Not @testable: everything asserted here is public API. Keeping it a plain import
+// means these tests do not depend on the package being built with testability enabled.
+import CarDashKit
 
 /// Checks the join between the layout engine, which knows only identifier strings, and
 /// the registry, which knows what those strings render as.
