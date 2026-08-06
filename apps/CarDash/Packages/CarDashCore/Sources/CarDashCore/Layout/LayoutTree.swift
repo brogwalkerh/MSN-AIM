@@ -168,9 +168,10 @@ public struct LayoutTree: Hashable, Sendable, Codable {
         guard let paneB = pane(b) else { throw LayoutError.paneNotFound(b) }
         guard a != b else { return }
 
-        var node = Self.replacingPane(in: root, id: a) { _ in .pane(paneB) } ?? root
-        node = Self.replacingPane(in: node, id: b) { _ in .pane(paneA) } ?? node
-        root = node
+        // One pass, not two replacements. Substituting a→B and then searching for b
+        // finds the copy of B that the first substitution just created, swapping it
+        // straight back and leaving the tree untouched.
+        root = Self.swapping(a, b, paneA: paneA, paneB: paneB, in: root)
     }
 
     public mutating func setFraction(_ dividerID: DividerID, to fraction: Double) throws {
@@ -265,6 +266,25 @@ public struct LayoutTree: Hashable, Sendable, Codable {
                 return .split(copy)
             }
             return nil
+        }
+    }
+
+    private static func swapping(
+        _ a: PaneID,
+        _ b: PaneID,
+        paneA: Pane,
+        paneB: Pane,
+        in node: LayoutNode
+    ) -> LayoutNode {
+        switch node {
+        case .pane(let pane):
+            if pane.id == a { return .pane(paneB) }
+            if pane.id == b { return .pane(paneA) }
+            return node
+        case .split(var split):
+            split.first = swapping(a, b, paneA: paneA, paneB: paneB, in: split.first)
+            split.second = swapping(a, b, paneA: paneA, paneB: paneB, in: split.second)
+            return .split(split)
         }
     }
 
