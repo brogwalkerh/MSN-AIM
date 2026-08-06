@@ -20,15 +20,21 @@ at 60 mph.
 
 Concretely:
 
-| Section | What actually works |
-|---|---|
-| **Map** | Full MapKit map, search, routing, follow-me camera, spoken turn prompts. MapKit supplies route *data* only, so guidance is ours: no lane guidance, junction views, live-traffic ETA or speed limits. A prominent "Open in Apple Maps" button hands off when you want the real thing. |
-| **Spotify** | Play/pause/skip/seek, now-playing, artwork, playlists. Needs Premium and the Spotify app installed — playback happens in Spotify's process, not ours. |
-| **Apple Music** | Your on-device library, and reading what the system Music app is playing. Catalog browsing/playback is hidden without a subscription rather than upsold. |
-| **YouTube** | Foreground playback via the embedded IFrame player. Audio stops when you leave the app or lock the screen; that's YouTube's behaviour, not a bug. |
-| **Local files** | Import audio into the app and play it. No account, no network — the one source that always works. |
-| **Phone / Messages** | Dial a favourite, and compose a prefilled message that *you* tap send on. iOS forbids reading your inbox, sending silently, or reading the system call history. |
-| **Gauges / Weather / Clock** | Speed, heading, altitude, g-force, trip meter, conditions, forecast. No accounts needed. |
+| Section | What actually works | State |
+|---|---|---|
+| **Tiling** | Arrange, resize, save and switch between dashboards. Landscape-first; portrait degrades to a focused tile plus a switcher rail. | **Built** |
+| **Map** | MapKit map, destination search, routing, follow-me camera, spoken turn prompts, off-route detection. MapKit supplies route *data* only, so guidance is ours: no lane guidance, junction views, live-traffic ETA or speed limits. A prominent "Open in Apple Maps" hands off when you want the real thing. | **Built** |
+| **Local files** | Import audio into the app and play it. No account, no network — the one source that always works. | **Built** |
+| **Apple Music** | Your on-device library, played through the system player. No subscription needed; there is no catalog browsing, so no paywall either. | **Built** |
+| **Gauges / Weather / Clock** | Speed, heading, altitude, trip meter, conditions, forecast, time. No accounts needed. | **Built** |
+| **Now Playing** | Transport bar for whatever *this app* is playing, plus lock-screen and steering-wheel controls. It cannot show audio from an app CarDash did not start — iOS gives no way to read another process's playback. | **Built** |
+| **Spotify** | Play/pause/skip/seek, now-playing, artwork. Needs Premium and the Spotify app installed — playback happens in Spotify's process, not ours. | Not yet built |
+| **Phone / Messages** | Dial a favourite, and compose a prefilled message that *you* tap send on. iOS forbids reading your inbox, sending silently, or reading the system call history. | Not yet built |
+| **YouTube** | Foreground playback via the embedded IFrame player. Audio stops when you leave the app or lock the screen; that's YouTube's behaviour, not a bug. | Not yet built |
+
+Sections that are not yet built appear in the tile picker marked "soon" and render a
+placeholder. They are real registry entries, so layouts referencing them load and lay out
+correctly today and light up when the section lands.
 
 **CarPlay itself is out of scope,** even for a car that has it: CarPlay third-party apps
 are template-only, so a user-arranged tiling dashboard cannot exist there. No CarPlay
