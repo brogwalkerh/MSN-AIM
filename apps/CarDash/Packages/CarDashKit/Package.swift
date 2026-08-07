@@ -17,13 +17,18 @@ let package = Package(
         .library(name: "CarDashKit", targets: ["CarDashKit"])
     ],
     dependencies: [
-        .package(name: "CarDashCore", path: "../CarDashCore")
+        .package(name: "CarDashCore", path: "../CarDashCore"),
+        // For the Live Activity's attributes type. The app and the widget extension must link
+        // the *same* declaration of it, or ActivityKit matches them by name, appears to work,
+        // and then fails to route updates in ways that are very hard to see.
+        .package(name: "CarDashActivity", path: "../CarDashActivity")
     ],
     targets: [
         .target(
             name: "CarDashKit",
             dependencies: [
-                .product(name: "CarDashCore", package: "CarDashCore")
+                .product(name: "CarDashCore", package: "CarDashCore"),
+                .product(name: "CarDashActivity", package: "CarDashActivity")
             ],
             swiftSettings: [.swiftLanguageMode(.v5)]
         )

@@ -63,6 +63,15 @@
 		<string>location</string>
 	</array>
 
+	<!-- Without this, Activity.request throws at runtime and nothing else says why. It
+	     belongs in the *app's* plist, not the extension's. -->
+	<key>NSSupportsLiveActivities</key>
+	<true/>
+	<!-- Lets the app push a new manoeuvre while backgrounded, which is the entire point:
+	     the lock screen has to keep up while the app is not on screen. -->
+	<key>NSSupportsLiveActivitiesFrequentUpdates</key>
+	<true/>
+
 	<key>NSLocationWhenInUseUsageDescription</key>
 	<string>CarDash uses your location to show your position on the map, give directions, and drive the speed and heading gauges.</string>
 	<key>NSAppleMusicUsageDescription</key>

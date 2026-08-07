@@ -37,6 +37,7 @@ REQUIRED_INFO_KEYS = [
     "UISupportedInterfaceOrientations",
     "LSApplicationQueriesSchemes",
     "CFBundleURLTypes",
+    "NSSupportsLiveActivities",
 ]
 
 # Build settings whose values are paths relative to the project directory. A rename that
@@ -183,6 +184,90 @@ def check_scheme(target_ids: dict) -> None:
             )
 
 
+def check_app_extensions(objects: dict) -> None:
+    """Every failure here is silent at build time.
+
+    An app extension that is built but never embedded, or whose bundle identifier is not
+    prefixed by its host app's, produces no error from xcodebuild and no error at launch.
+    The app installs, runs, and simply never shows a Live Activity — which looks exactly
+    like a bug in the feature rather than in the project file.
+    """
+    apps = [
+        (i, o) for i, o in objects.items()
+        if o.get("isa") == "PBXNativeTarget"
+        and o.get("productType") == "com.apple.product-type.application"
+    ]
+    extensions = {
+        i: o for i, o in objects.items()
+        if o.get("isa") == "PBXNativeTarget"
+        and o.get("productType", "").startswith("com.apple.product-type.app-extension")
+    }
+    if not extensions:
+        return
+
+    for app_id, app in apps:
+        # dstSubfolderSpec 13 is "PlugIns", which is where an .appex has to land.
+        embedded: set[str] = set()
+        for phase_id in app.get("buildPhases", []):
+            phase = objects.get(phase_id, {})
+            if phase.get("isa") != "PBXCopyFilesBuildPhase":
+                continue
+            if str(phase.get("dstSubfolderSpec")) != "13":
+                continue
+            for build_file_id in phase.get("files", []):
+                ref = objects.get(build_file_id, {}).get("fileRef")
+                if ref:
+                    embedded.add(ref)
+
+        depends_on = {
+            objects.get(objects.get(d, {}).get("targetProxy", ""), {}).get("remoteGlobalIDString")
+            for d in app.get("dependencies", [])
+        }
+
+        for ext_id, ext in extensions.items():
+            name = ext.get("name", "?")
+            if ext.get("productReference") not in embedded:
+                fail(
+                    f"extension {name} is not embedded by {app.get('name')} — it will build "
+                    f"and silently never run (needs a PBXCopyFilesBuildPhase, dstSubfolderSpec 13)"
+                )
+            if ext_id not in depends_on:
+                fail(f"{app.get('name')} does not depend on {name}; build order is not guaranteed")
+
+    # iOS refuses to install an extension whose identifier is not the app's plus a suffix,
+    # and the error names neither target.
+    app_ids = {
+        objects[c]["buildSettings"].get("PRODUCT_BUNDLE_IDENTIFIER")
+        for _, app in apps
+        for c in objects.get(app.get("buildConfigurationList", ""), {}).get("buildConfigurations", [])
+    }
+    for ext in extensions.values():
+        for config_id in objects.get(ext.get("buildConfigurationList", ""), {}).get(
+            "buildConfigurations", []
+        ):
+            settings = objects[config_id].get("buildSettings", {})
+            identifier = settings.get("PRODUCT_BUNDLE_IDENTIFIER", "")
+            if not any(identifier.startswith(f"{a}.") for a in app_ids if a):
+                fail(
+                    f"extension bundle id {identifier!r} is not prefixed by the app's "
+                    f"{sorted(a for a in app_ids if a)} — iOS will refuse to install it"
+                )
+            if settings.get("SKIP_INSTALL") != "YES":
+                fail(f"extension {ext.get('name')} should set SKIP_INSTALL = YES")
+
+            plist_path = settings.get("INFOPLIST_FILE")
+            if not plist_path:
+                continue
+            full = APP_DIR / plist_path
+            if not full.exists():
+                continue  # already reported by check_build_settings
+            with full.open("rb") as handle:
+                ext_info = plistlib.load(handle)
+            point = ext_info.get("NSExtension", {}).get("NSExtensionPointIdentifier")
+            if not point:
+                fail(f"{plist_path} has no NSExtension.NSExtensionPointIdentifier")
+
+
 def check_info_plist() -> None:
     info_path = APP_DIR / "Supporting" / "Info.plist"
     with info_path.open("rb") as handle:
@@ -233,6 +318,7 @@ def main() -> int:
     check_build_settings(objects)
     check_packages(objects)
     check_scheme(targets)
+    check_app_extensions(objects)
     check_info_plist()
 
     if errors:

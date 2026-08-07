@@ -92,6 +92,18 @@ struct InfoPlistTests {
         #expect(!value.contains("$("), "unexpanded build setting: \(value)")
     }
 
+    // Activity.request throws at runtime without this, and nothing in the error names the
+    // missing key. It belongs to the app, not to the widget extension that draws the thing.
+    @Test("Live Activities are declared by the app")
+    func liveActivities() throws {
+        let info = try info()
+        #expect(info["NSSupportsLiveActivities"] as? Bool == true)
+        #expect(
+            info["NSSupportsLiveActivitiesFrequentUpdates"] as? Bool == true,
+            "without frequent updates the lock screen stops keeping up mid-route"
+        )
+    }
+
     @Test("Build-setting substitutions in Info.plist actually expanded")
     func substitutionsExpanded() throws {
         let identifier = try #require(try info()["CFBundleIdentifier"] as? String)

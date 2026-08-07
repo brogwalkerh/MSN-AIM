@@ -20,6 +20,8 @@ public final class AppServices {
     public let audio: AudioCoordinator
     /// Shared by the Phone and Messages tiles — they are the same people.
     public let favourites: FavouritesStore
+    /// Puts the next manoeuvre on the lock screen, where the dashboard cannot go.
+    public let liveActivity: NavigationActivityController
 
     public var unitSystem: UnitSystem {
         didSet {
@@ -63,6 +65,7 @@ public final class AppServices {
         self.announcer = NavigationAnnouncer()
         self.audio = AudioCoordinator()
         self.favourites = FavouritesStore(defaults: defaults)
+        self.liveActivity = NavigationActivityController()
         self.defaults = defaults
         self.unitSystem = defaults.string(forKey: Self.unitKey)
             .flatMap(UnitSystem.init(rawValue:))
@@ -83,6 +86,9 @@ public final class AppServices {
     public func start() {
         location.start()
         theme.refresh()
+        // A Live Activity outlives the process that started it, so a route abandoned by a crash
+        // or a force-quit leaves a banner on the lock screen that nothing else will ever clear.
+        liveActivity.endOrphanedActivities()
     }
 
     /// Called when a fix arrives.
@@ -105,6 +111,40 @@ public final class AppServices {
         )
         for prompt in route.ingest(fix) {
             announcer.announce(prompt)
+        }
+
+        syncLiveActivity(now: timestamp)
+    }
+
+    /// Keeps the lock screen in step with the route.
+    ///
+    /// Driven from the position stream rather than from the map tile, for the same reason
+    /// navigation itself is: the lock screen has to keep working when the map is not on screen,
+    /// and by definition it has to keep working when *nothing* is on screen.
+    ///
+    /// The rate limiting lives in the controller, which compares rendered strings rather than
+    /// raw metres — moving twelve metres changes the number and changes nothing anyone sees.
+    private func syncLiveActivity(now: Date) {
+        guard let guidance = route.guidance else {
+            if liveActivity.isRunning { liveActivity.end() }
+            return
+        }
+
+        let state = NavigationActivityState.from(guidance, units: unitSystem, now: now)
+
+        guard liveActivity.isRunning else {
+            liveActivity.start(
+                destination: route.destinationName ?? "Destination",
+                state: state
+            )
+            return
+        }
+
+        if guidance.hasArrived {
+            // Ends showing the arrival rather than the last turn, and leaves it up a minute.
+            liveActivity.finish(with: state)
+        } else {
+            liveActivity.update(state)
         }
     }
 }

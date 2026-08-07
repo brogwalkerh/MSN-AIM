@@ -69,6 +69,11 @@
 						<key>TestTargetID</key>
 						<string>CD0000000000000000000002</string>
 					</dict>
+					<key>CD0000000000000000000030</key>
+					<dict>
+						<key>CreatedOnToolsVersion</key>
+						<string>26.0</string>
+					</dict>
 				</dict>
 			</dict>
 			<key>buildConfigurationList</key>
@@ -94,6 +99,7 @@
 			<array>
 				<string>CD0000000000000000000019</string>
 				<string>CD000000000000000000001A</string>
+				<string>CD0000000000000000000041</string>
 			</array>
 			<key>productRefGroup</key>
 			<string>CD0000000000000000000005</string>
@@ -105,6 +111,7 @@
 			<array>
 				<string>CD0000000000000000000002</string>
 				<string>CD0000000000000000000003</string>
+				<string>CD0000000000000000000030</string>
 			</array>
 		</dict>
 
@@ -118,6 +125,7 @@
 			<array>
 				<string>CD0000000000000000000027</string>
 				<string>CD0000000000000000000008</string>
+				<string>CD0000000000000000000032</string>
 				<string>CD0000000000000000000009</string>
 				<string>CD0000000000000000000022</string>
 				<string>CD0000000000000000000005</string>
@@ -134,6 +142,7 @@
 			<array>
 				<string>CD0000000000000000000006</string>
 				<string>CD0000000000000000000007</string>
+				<string>CD0000000000000000000031</string>
 			</array>
 			<key>name</key>
 			<string>Products</string>
@@ -156,6 +165,7 @@
 			<key>children</key>
 			<array>
 				<string>CD0000000000000000000024</string>
+				<string>CD0000000000000000000042</string>
 				<string>CD0000000000000000000025</string>
 				<string>CD0000000000000000000023</string>
 				<string>CD0000000000000000000026</string>
@@ -192,6 +202,20 @@
 			<array/>
 			<key>path</key>
 			<string>AppTests</string>
+			<key>sourceTree</key>
+			<string>&lt;group&gt;</string>
+		</dict>
+
+		<key>CD0000000000000000000032</key>
+		<dict>
+			<key>isa</key>
+			<string>PBXFileSystemSynchronizedRootGroup</string>
+			<key>explicitFileTypes</key>
+			<dict/>
+			<key>explicitFolders</key>
+			<array/>
+			<key>path</key>
+			<string>ActivityExtension</string>
 			<key>sourceTree</key>
 			<string>&lt;group&gt;</string>
 		</dict>
@@ -286,6 +310,32 @@
 			<string>&lt;group&gt;</string>
 		</dict>
 
+		<key>CD0000000000000000000031</key>
+		<dict>
+			<key>isa</key>
+			<string>PBXFileReference</string>
+			<key>explicitFileType</key>
+			<string>wrapper.app-extension</string>
+			<key>includeInIndex</key>
+			<string>0</string>
+			<key>path</key>
+			<string>CarDashActivityExtension.appex</string>
+			<key>sourceTree</key>
+			<string>BUILT_PRODUCTS_DIR</string>
+		</dict>
+
+		<key>CD0000000000000000000042</key>
+		<dict>
+			<key>isa</key>
+			<string>PBXFileReference</string>
+			<key>lastKnownFileType</key>
+			<string>text.plist.xml</string>
+			<key>path</key>
+			<string>ActivityExtension-Info.plist</string>
+			<key>sourceTree</key>
+			<string>&lt;group&gt;</string>
+		</dict>
+
 		<!-- ===== Targets ===================================================== -->
 
 		<key>CD0000000000000000000002</key>
@@ -299,11 +349,14 @@
 				<string>CD000000000000000000000A</string>
 				<string>CD000000000000000000000B</string>
 				<string>CD000000000000000000000C</string>
+				<string>CD0000000000000000000039</string>
 			</array>
 			<key>buildRules</key>
 			<array/>
 			<key>dependencies</key>
-			<array/>
+			<array>
+				<string>CD000000000000000000003B</string>
+			</array>
 			<key>fileSystemSynchronizedGroups</key>
 			<array>
 				<string>CD0000000000000000000008</string>
@@ -358,6 +411,53 @@
 			<string>CD0000000000000000000007</string>
 			<key>productType</key>
 			<string>com.apple.product-type.bundle.unit-test</string>
+		</dict>
+
+		<!--
+			The widget extension. It exists only to host the navigation Live Activity, which
+			is how the next manoeuvre reaches the lock screen once the phone locks — and a
+			phone in a windscreen mount locks constantly.
+
+			An extension is unavoidable here: ActivityKit's `Activity.request` runs in the
+			app, but the *views* must come from a widget extension. There is no way to draw
+			a Live Activity from the app itself.
+
+			Its sources are one file, and `ActivityExtension` is a buildable folder like
+			`App`, so adding another widget later needs no edit here.
+		-->
+		<key>CD0000000000000000000030</key>
+		<dict>
+			<key>isa</key>
+			<string>PBXNativeTarget</string>
+			<key>buildConfigurationList</key>
+			<string>CD0000000000000000000036</string>
+			<key>buildPhases</key>
+			<array>
+				<string>CD0000000000000000000033</string>
+				<string>CD0000000000000000000034</string>
+				<string>CD0000000000000000000035</string>
+			</array>
+			<key>buildRules</key>
+			<array/>
+			<key>dependencies</key>
+			<array/>
+			<key>fileSystemSynchronizedGroups</key>
+			<array>
+				<string>CD0000000000000000000032</string>
+			</array>
+			<key>name</key>
+			<string>CarDashActivityExtension</string>
+			<key>packageProductDependencies</key>
+			<array>
+				<string>CD000000000000000000003D</string>
+				<string>CD000000000000000000003E</string>
+			</array>
+			<key>productName</key>
+			<string>CarDashActivityExtension</string>
+			<key>productReference</key>
+			<string>CD0000000000000000000031</string>
+			<key>productType</key>
+			<string>com.apple.product-type.app-extension</string>
 		</dict>
 
 		<!-- ===== Build phases ================================================ -->
@@ -443,6 +543,116 @@
 			<string>0</string>
 		</dict>
 
+		<!-- ===== Extension build phases ====================================== -->
+
+		<key>CD0000000000000000000033</key>
+		<dict>
+			<key>isa</key>
+			<string>PBXSourcesBuildPhase</string>
+			<key>buildActionMask</key>
+			<string>2147483647</string>
+			<key>files</key>
+			<array/>
+			<key>runOnlyForDeploymentPostprocessing</key>
+			<string>0</string>
+		</dict>
+
+		<key>CD0000000000000000000034</key>
+		<dict>
+			<key>isa</key>
+			<string>PBXFrameworksBuildPhase</string>
+			<key>buildActionMask</key>
+			<string>2147483647</string>
+			<key>files</key>
+			<array>
+				<string>CD000000000000000000003F</string>
+				<string>CD0000000000000000000040</string>
+			</array>
+			<key>runOnlyForDeploymentPostprocessing</key>
+			<string>0</string>
+		</dict>
+
+		<key>CD0000000000000000000035</key>
+		<dict>
+			<key>isa</key>
+			<string>PBXResourcesBuildPhase</string>
+			<key>buildActionMask</key>
+			<string>2147483647</string>
+			<key>files</key>
+			<array/>
+			<key>runOnlyForDeploymentPostprocessing</key>
+			<string>0</string>
+		</dict>
+
+		<!--
+			Embed Foundation Extensions.
+
+			An .appex that is built but not copied into the app produces no error anywhere —
+			the app installs, runs, and simply never shows a Live Activity. This phase is the
+			difference, and `RemoveHeadersOnCopy` is what App Store validation expects.
+		-->
+		<key>CD0000000000000000000039</key>
+		<dict>
+			<key>isa</key>
+			<string>PBXCopyFilesBuildPhase</string>
+			<key>buildActionMask</key>
+			<string>2147483647</string>
+			<key>dstPath</key>
+			<string></string>
+			<key>dstSubfolderSpec</key>
+			<string>13</string>
+			<key>files</key>
+			<array>
+				<string>CD000000000000000000003A</string>
+			</array>
+			<key>name</key>
+			<string>Embed Foundation Extensions</string>
+			<key>runOnlyForDeploymentPostprocessing</key>
+			<string>0</string>
+		</dict>
+
+		<key>CD000000000000000000003A</key>
+		<dict>
+			<key>isa</key>
+			<string>PBXBuildFile</string>
+			<key>fileRef</key>
+			<string>CD0000000000000000000031</string>
+			<key>settings</key>
+			<dict>
+				<key>ATTRIBUTES</key>
+				<array>
+					<string>RemoveHeadersOnCopy</string>
+				</array>
+			</dict>
+		</dict>
+
+		<!-- ===== Target dependency (app → extension) ========================= -->
+		<!-- Without this the extension may not be built before the app tries to embed it. -->
+
+		<key>CD000000000000000000003B</key>
+		<dict>
+			<key>isa</key>
+			<string>PBXTargetDependency</string>
+			<key>target</key>
+			<string>CD0000000000000000000030</string>
+			<key>targetProxy</key>
+			<string>CD000000000000000000003C</string>
+		</dict>
+
+		<key>CD000000000000000000003C</key>
+		<dict>
+			<key>isa</key>
+			<string>PBXContainerItemProxy</string>
+			<key>containerPortal</key>
+			<string>CD0000000000000000000001</string>
+			<key>proxyType</key>
+			<string>1</string>
+			<key>remoteGlobalIDString</key>
+			<string>CD0000000000000000000030</string>
+			<key>remoteInfo</key>
+			<string>CarDashActivityExtension</string>
+		</dict>
+
 		<!-- ===== Target dependency (tests → app) ============================= -->
 
 		<key>CD000000000000000000001F</key>
@@ -485,6 +695,55 @@
 			<string>XCLocalSwiftPackageReference</string>
 			<key>relativePath</key>
 			<string>Packages/CarDashKit</string>
+		</dict>
+
+		<key>CD0000000000000000000041</key>
+		<dict>
+			<key>isa</key>
+			<string>XCLocalSwiftPackageReference</string>
+			<key>relativePath</key>
+			<string>Packages/CarDashActivity</string>
+		</dict>
+
+		<!--
+			The extension links CarDashActivity and CarDashCore, and deliberately not
+			CarDashKit. Both sides of the process boundary must link the *same* declaration
+			of the ActivityAttributes type or ActivityKit matches them by name, appears to
+			work, and silently fails to route updates. CarDashKit would also satisfy that,
+			since it depends on CarDashActivity — but it drags in MapKit, AVFoundation,
+			MediaPlayer, ContactsUI and MessageUI, and a widget extension runs under a
+			memory limit measured in tens of megabytes.
+		-->
+		<key>CD000000000000000000003D</key>
+		<dict>
+			<key>isa</key>
+			<string>XCSwiftPackageProductDependency</string>
+			<key>productName</key>
+			<string>CarDashActivity</string>
+		</dict>
+
+		<key>CD000000000000000000003E</key>
+		<dict>
+			<key>isa</key>
+			<string>XCSwiftPackageProductDependency</string>
+			<key>productName</key>
+			<string>CarDashCore</string>
+		</dict>
+
+		<key>CD000000000000000000003F</key>
+		<dict>
+			<key>isa</key>
+			<string>PBXBuildFile</string>
+			<key>productRef</key>
+			<string>CD000000000000000000003D</string>
+		</dict>
+
+		<key>CD0000000000000000000040</key>
+		<dict>
+			<key>isa</key>
+			<string>PBXBuildFile</string>
+			<key>productRef</key>
+			<string>CD000000000000000000003E</string>
 		</dict>
 
 		<key>CD000000000000000000001B</key>
@@ -594,6 +853,21 @@
 			<array>
 				<string>CD0000000000000000000017</string>
 				<string>CD0000000000000000000018</string>
+			</array>
+			<key>defaultConfigurationIsVisible</key>
+			<string>0</string>
+			<key>defaultConfigurationName</key>
+			<string>Release</string>
+		</dict>
+
+		<key>CD0000000000000000000036</key>
+		<dict>
+			<key>isa</key>
+			<string>XCConfigurationList</string>
+			<key>buildConfigurations</key>
+			<array>
+				<string>CD0000000000000000000037</string>
+				<string>CD0000000000000000000038</string>
 			</array>
 			<key>defaultConfigurationIsVisible</key>
 			<string>0</string>
@@ -715,6 +989,74 @@
 				<string>$(CARDASH_BUNDLE_ID)</string>
 				<key>PRODUCT_NAME</key>
 				<string>CarDash</string>
+			</dict>
+			<key>name</key>
+			<string>Release</string>
+		</dict>
+
+		<!-- ===== Extension target build configurations =======================
+		     The bundle identifier MUST be the app's with a suffix. iOS refuses to install
+		     an extension whose identifier is not prefixed by its host app's, and the error
+		     names neither file.
+
+		     SKIP_INSTALL is YES because the .appex ships inside the app, not beside it.
+		     CODE_SIGN_ENTITLEMENTS is absent on purpose: this extension needs no
+		     capabilities of its own, and an empty entitlements file causes provisioning
+		     failures rather than preventing them. -->
+
+		<key>CD0000000000000000000037</key>
+		<dict>
+			<key>isa</key>
+			<string>XCBuildConfiguration</string>
+			<key>buildSettings</key>
+			<dict>
+				<key>GENERATE_INFOPLIST_FILE</key>
+				<string>NO</string>
+				<key>INFOPLIST_FILE</key>
+				<string>Supporting/ActivityExtension-Info.plist</string>
+				<key>LD_RUNPATH_SEARCH_PATHS</key>
+				<array>
+					<string>$(inherited)</string>
+					<string>@executable_path/Frameworks</string>
+					<string>@executable_path/../../Frameworks</string>
+				</array>
+				<key>PRODUCT_BUNDLE_IDENTIFIER</key>
+				<string>$(CARDASH_BUNDLE_ID).activity</string>
+				<key>PRODUCT_NAME</key>
+				<string>CarDashActivityExtension</string>
+				<key>SKIP_INSTALL</key>
+				<string>YES</string>
+				<key>SWIFT_EMIT_LOC_STRINGS</key>
+				<string>YES</string>
+			</dict>
+			<key>name</key>
+			<string>Debug</string>
+		</dict>
+
+		<key>CD0000000000000000000038</key>
+		<dict>
+			<key>isa</key>
+			<string>XCBuildConfiguration</string>
+			<key>buildSettings</key>
+			<dict>
+				<key>GENERATE_INFOPLIST_FILE</key>
+				<string>NO</string>
+				<key>INFOPLIST_FILE</key>
+				<string>Supporting/ActivityExtension-Info.plist</string>
+				<key>LD_RUNPATH_SEARCH_PATHS</key>
+				<array>
+					<string>$(inherited)</string>
+					<string>@executable_path/Frameworks</string>
+					<string>@executable_path/../../Frameworks</string>
+				</array>
+				<key>PRODUCT_BUNDLE_IDENTIFIER</key>
+				<string>$(CARDASH_BUNDLE_ID).activity</string>
+				<key>PRODUCT_NAME</key>
+				<string>CarDashActivityExtension</string>
+				<key>SKIP_INSTALL</key>
+				<string>YES</string>
+				<key>SWIFT_EMIT_LOC_STRINGS</key>
+				<string>YES</string>
 			</dict>
 			<key>name</key>
 			<string>Release</string>
