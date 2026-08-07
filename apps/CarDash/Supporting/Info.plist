@@ -74,9 +74,15 @@
 	     "Spotify is not installed" from "Spotify is installed but not running" — and the
 	     offer to open Spotify, which is the fix for having no active device, silently
 	     does nothing. -->
+	<!-- `tel` and `sms` are here for canOpenURL, which is how the Phone tile tells a
+	     device that can place calls from an iPad that cannot. Without the declaration
+	     canOpenURL returns false everywhere and the dial button would be permanently
+	     disabled on a phone that dials perfectly well. -->
 	<key>LSApplicationQueriesSchemes</key>
 	<array>
 		<string>spotify</string>
+		<string>tel</string>
+		<string>sms</string>
 	</array>
 
 	<!-- Supplied by Secrets.xcconfig, which is untracked. Empty in a fresh clone, and

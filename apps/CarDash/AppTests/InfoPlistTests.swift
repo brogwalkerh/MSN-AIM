@@ -43,6 +43,16 @@ struct InfoPlistTests {
         #expect(info["NSContactsUsageDescription"] == nil)
     }
 
+    // canOpenURL answers false for any scheme not declared here, whatever the device can
+    // actually do. Without these the Phone tile could not tell a phone from an iPad and
+    // would disable its own dial button on hardware that dials perfectly well.
+    @Test("Dialling and messaging schemes are queryable")
+    func telephonySchemes() throws {
+        let queries = try #require(try info()["LSApplicationQueriesSchemes"] as? [String])
+        #expect(queries.contains("tel"))
+        #expect(queries.contains("sms"))
+    }
+
     @Test("Background modes are exactly audio and location")
     func backgroundModes() throws {
         let modes = try #require(try info()["UIBackgroundModes"] as? [String])

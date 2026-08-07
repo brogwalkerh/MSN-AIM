@@ -83,33 +83,8 @@ public final class SectionRegistry {
 //
 // Real descriptors rather than a special case in the registry, so the picker, the
 // minimum-size policy and the preset validation all treat them uniformly. Each is
-// replaced in place when its phase lands.
-
-enum PhoneSection {
-    static var descriptor: SectionDescriptor {
-        .placeholder(
-            id: .phone,
-            title: "Phone",
-            systemImage: "phone.fill",
-            blurb: "Favourites you can dial with one tap.",
-            arrivesIn: "Phase 6",
-            capabilities: [.singleton]
-        )
-    }
-}
-
-enum MessagesSection {
-    static var descriptor: SectionDescriptor {
-        .placeholder(
-            id: .messages,
-            title: "Messages",
-            systemImage: "message.fill",
-            blurb: "Prefilled replies. iOS still requires you to tap send.",
-            arrivesIn: "Phase 6",
-            capabilities: [.singleton]
-        )
-    }
-}
+// replaced in place when its phase lands — Phone and Messages have been, and now live
+// next to their views like every other real section.
 
 enum YouTubeSection {
     static var descriptor: SectionDescriptor {

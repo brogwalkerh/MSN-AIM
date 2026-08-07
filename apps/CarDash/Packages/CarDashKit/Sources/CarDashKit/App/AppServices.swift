@@ -18,6 +18,8 @@ public final class AppServices {
     public let search: SearchService
     public let announcer: NavigationAnnouncer
     public let audio: AudioCoordinator
+    /// Shared by the Phone and Messages tiles — they are the same people.
+    public let favourites: FavouritesStore
 
     public var unitSystem: UnitSystem {
         didSet {
@@ -60,6 +62,7 @@ public final class AppServices {
         self.search = SearchService()
         self.announcer = NavigationAnnouncer()
         self.audio = AudioCoordinator()
+        self.favourites = FavouritesStore(defaults: defaults)
         self.defaults = defaults
         self.unitSystem = defaults.string(forKey: Self.unitKey)
             .flatMap(UnitSystem.init(rawValue:))
