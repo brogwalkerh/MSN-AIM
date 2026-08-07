@@ -1,4 +1,5 @@
 import SwiftUI
+import CarDashCore
 
 /// Colours and type for the dashboard.
 ///
@@ -46,6 +47,30 @@ public struct DashTheme: Sendable, Hashable {
 
 extension EnvironmentValues {
     @Entry public var dashTheme: DashTheme = .night
+
+    /// How tightly to pack things. Injected once by `DashboardView` and read by the tile
+    /// chrome and every section, so one setting moves the whole dashboard at once.
+    @Entry public var dashDensity: DisplayDensity = .default
+}
+
+extension View {
+    /// The standard inset from a tile's edge to its content.
+    ///
+    /// Every section used to write its own `.padding(8)` or `.padding(10)`, which meant the
+    /// dashboard had no single spacing to change and the sections quietly disagreed with each
+    /// other by a couple of points. This is that number, once.
+    public func panePadding(_ edges: Edge.Set = .all) -> some View {
+        modifier(PanePadding(edges: edges))
+    }
+}
+
+struct PanePadding: ViewModifier {
+    let edges: Edge.Set
+    @Environment(\.dashDensity) private var density
+
+    func body(content: Content) -> some View {
+        content.padding(edges, density.panePadding)
+    }
 }
 
 /// Type sized for glancing, not reading.

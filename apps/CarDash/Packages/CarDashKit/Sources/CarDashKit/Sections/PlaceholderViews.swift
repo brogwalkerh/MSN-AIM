@@ -27,7 +27,7 @@ struct SectionPlaceholderView: View {
                     .multilineTextAlignment(.center)
             }
         }
-        .padding(10)
+        .panePadding()
         .frame(maxWidth: .infinity, maxHeight: .infinity)
         .lineLimit(2)
         .minimumScaleFactor(0.6)
@@ -67,7 +67,7 @@ struct MissingSectionView: View {
                 .frame(height: 40)
                 .background(theme.accent, in: Capsule())
         }
-        .padding(10)
+        .panePadding()
         .frame(maxWidth: .infinity, maxHeight: .infinity)
         .minimumScaleFactor(0.6)
     }

@@ -123,7 +123,10 @@ struct MapPaneView: View {
             }
             .padding(10)
             .background(theme.background.opacity(0.82), in: RoundedRectangle(cornerRadius: 12))
-            .padding(8)
+            // The inner 10 is the callout's own text inset; this is its distance from the
+            // tile edge. They used to be 10 and 8, which floated the guidance card 18 points
+            // into a map that is deliberately full-bleed.
+            .panePadding()
         }
     }
 
@@ -161,7 +164,7 @@ struct MapPaneView: View {
                     }
                 }
             }
-            .padding(8)
+            .panePadding()
         }
     }
 

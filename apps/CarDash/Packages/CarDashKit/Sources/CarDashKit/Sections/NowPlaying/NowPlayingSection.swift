@@ -45,7 +45,7 @@ struct NowPlayingPaneView: View {
 
             TransportControls(audio: audio, size: context.environment.isCompact ? 40 : 48)
         }
-        .padding(.horizontal, 10)
+        .panePadding(.horizontal)
         .frame(maxWidth: .infinity, maxHeight: .infinity)
     }
 }

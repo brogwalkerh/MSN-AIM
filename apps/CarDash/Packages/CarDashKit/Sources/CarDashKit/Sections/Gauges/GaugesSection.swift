@@ -32,7 +32,7 @@ struct GaugesPaneView: View {
             }
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity)
-        .padding(8)
+        .panePadding()
         .contentShape(Rectangle())
         // Resetting the trip is destructive and easy to hit by accident on a bumpy road,
         // so it is behind a long press rather than a tap.

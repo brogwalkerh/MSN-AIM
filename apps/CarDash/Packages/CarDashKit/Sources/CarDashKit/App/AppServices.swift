@@ -26,8 +26,18 @@ public final class AppServices {
         }
     }
 
+    /// How tightly the dashboard is packed. Read by the views through the environment and by
+    /// the layout solver through `LayoutModel`, so changing it re-solves and redraws.
+    public var density: DisplayDensity {
+        didSet {
+            guard density != oldValue else { return }
+            defaults.set(density.rawValue, forKey: Self.densityKey)
+        }
+    }
+
     @ObservationIgnored private let defaults: UserDefaults
     @ObservationIgnored private static let unitKey = "cardash.unitSystem"
+    @ObservationIgnored private static let densityKey = "cardash.density"
 
     /// Every dependency is optional rather than defaulted, because a default argument
     /// expression is evaluated in a nonisolated context and none of these main-actor
@@ -54,6 +64,11 @@ public final class AppServices {
         self.unitSystem = defaults.string(forKey: Self.unitKey)
             .flatMap(UnitSystem.init(rawValue:))
             ?? Self.regionDefault
+        // An unreadable stored value — written by a build with a level this one dropped —
+        // falls back rather than refusing to launch.
+        self.density = defaults.string(forKey: Self.densityKey)
+            .flatMap(DisplayDensity.init(rawValue:))
+            ?? .default
     }
 
     /// Best guess from the device's region, since asking on first launch would be a

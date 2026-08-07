@@ -1,19 +1,21 @@
 import Foundation
 
-/// Fixed spatial constants shared by the layout engine and the views that draw it.
+/// The spatial constants, at the default density.
+///
+/// These exist as the default arguments of the Core layout functions, so that a caller with no
+/// opinion gets a sensible arrangement. Anything that draws the real dashboard should pass the
+/// user's chosen `DisplayDensity` instead — see `DisplayDensity` for why the numbers vary and
+/// why they have to agree with each other.
 public enum LayoutMetrics {
     /// Gap between adjacent tiles, and the width of the divider that lives in it.
-    public static let gutter: Double = 10
+    public static var gutter: Double { DisplayDensity.default.gutter }
 
-    /// How far beyond the visible divider a drag still counts.
-    ///
-    /// A 10-point bar is a fine thing to look at and an unreasonable thing to hit in a
-    /// moving car, so the touch target is inflated to roughly 44 points total without
-    /// making the visual any heavier.
-    public static let dividerHitSlop: Double = 17
+    /// How far beyond the visible divider a drag still counts, inflating the touch target
+    /// to at least `DisplayDensity.minimumDividerTarget` without making the bar any heavier.
+    public static var dividerHitSlop: Double { DisplayDensity.default.dividerHitSlop }
 
     /// Corner radius of a tile.
-    public static let paneCornerRadius: Double = 18
+    public static var paneCornerRadius: Double { DisplayDensity.default.paneCornerRadius }
 }
 
 /// Ceilings on how far a layout may be subdivided.

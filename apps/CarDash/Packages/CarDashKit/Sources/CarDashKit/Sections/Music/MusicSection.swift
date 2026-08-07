@@ -36,7 +36,7 @@ struct MusicPaneView: View {
                 library
             }
         }
-        .padding(8)
+        .panePadding()
         .frame(maxWidth: .infinity, maxHeight: .infinity)
         .fileImporter(
             isPresented: $importing,

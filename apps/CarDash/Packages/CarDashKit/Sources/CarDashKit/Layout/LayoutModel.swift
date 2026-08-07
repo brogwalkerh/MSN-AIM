@@ -19,6 +19,14 @@ public final class LayoutModel {
 
     public var isEditing = false
 
+    /// Kept in step with the user's setting by `DashboardView`.
+    ///
+    /// It lives here rather than being passed to each call because the gutter is an input to
+    /// the solver, to the derived-portrait adaptation and to the fit check that decides
+    /// whether a split is allowed at all — and those three have to agree, or a tile could be
+    /// laid out at one spacing and validated at another.
+    public var density: DisplayDensity = .default
+
     /// The last refused edit, for the UI to surface. Refusals are normal — splitting a
     /// tile that has no room is a legitimate thing to try — so they are reported rather
     /// than thrown at the caller.
@@ -70,7 +78,12 @@ public final class LayoutModel {
 
     /// The tree actually being drawn, plus anything demoted to the overflow rail.
     public var displayed: AdaptedLayout {
-        activeDocument.layout(for: canvasClass, canvas: canvasSize, policy: policy)
+        activeDocument.layout(
+            for: canvasClass,
+            canvas: canvasSize,
+            policy: policy,
+            gutter: density.gutter
+        )
     }
 
     public var solution: LayoutSolution {
@@ -93,7 +106,12 @@ public final class LayoutModel {
     public func rendered(for size: LayoutSize) -> RenderedLayout {
         let size = size.isEmpty ? ReferenceCanvas.phone : size
         let canvasClass = CanvasClass.classify(size)
-        let adapted = activeDocument.layout(for: canvasClass, canvas: size, policy: policy)
+        let adapted = activeDocument.layout(
+            for: canvasClass,
+            canvas: size,
+            policy: policy,
+            gutter: density.gutter
+        )
         return RenderedLayout(
             canvasSize: size,
             canvasClass: canvasClass,
@@ -101,6 +119,8 @@ public final class LayoutModel {
             solution: LayoutSolver.solve(
                 adapted.tree,
                 in: LayoutRect(origin: .zero, size: size),
+                gutter: density.gutter,
+                hitSlop: density.dividerHitSlop,
                 policy: policy
             )
         )
@@ -133,6 +153,7 @@ public final class LayoutModel {
                 inserting: sectionID,
                 fitting: canvasSize,
                 policy: policy,
+                gutter: density.gutter,
                 limits: splitLimits
             )
         }

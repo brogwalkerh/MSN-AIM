@@ -44,7 +44,7 @@ struct ClockPaneView: View {
             .frame(maxWidth: .infinity, maxHeight: .infinity)
             .minimumScaleFactor(0.4)
             .lineLimit(1)
-            .padding(8)
+            .panePadding()
         }
         .accessibilityElement()
         .accessibilityLabel("Clock")

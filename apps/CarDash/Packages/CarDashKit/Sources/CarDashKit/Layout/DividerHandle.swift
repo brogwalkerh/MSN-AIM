@@ -82,8 +82,12 @@ struct DividerHandle: View {
     }
 
     /// Thicker and longer while editing, so the dividers read as things you can grab.
+    ///
+    /// Capped at the gutter, which at the tightest density is 4 points — without the cap the
+    /// bar would overflow its own track and sit under the neighbouring tiles.
     private var barThickness: CGFloat {
-        isDragging ? 6 : (isEditing ? 5 : 3)
+        let gutter = divider.axis == .horizontal ? divider.trackRect.width : divider.trackRect.height
+        return min(gutter, isDragging ? 6 : (isEditing ? 5 : 3))
     }
 
     private var barLength: CGFloat {

@@ -55,7 +55,7 @@ struct WeatherPaneView: View {
             }
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity)
-        .padding(10)
+        .panePadding()
         .task(id: context.services.location.coordinate) {
             store.refresh(for: context.services.location.coordinate)
         }

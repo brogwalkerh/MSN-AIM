@@ -23,7 +23,7 @@ public struct DashboardView: View {
             theme.background.ignoresSafeArea()
 
             TilingCanvas(model: model, services: services)
-                .padding(LayoutMetrics.gutter)
+                .padding(services.density.canvasInset)
 
             controls
                 .padding(.top, 8)
@@ -33,6 +33,7 @@ public struct DashboardView: View {
             refusalBanner
         }
         .environment(\.dashTheme, theme)
+        .environment(\.dashDensity, services.density)
         .preferredColorScheme(services.theme.isNight ? .dark : .light)
         .sheet(isPresented: $showingLibrary) {
             LayoutLibrarySheet(model: model, registry: services.registry)
@@ -42,6 +43,12 @@ public struct DashboardView: View {
         }
         .task {
             services.start()
+            // The solver needs the gutter, and it lives on the model rather than in the
+            // environment because it is an input to the layout arithmetic, not to drawing.
+            model.density = services.density
+        }
+        .onChange(of: services.density) { _, density in
+            withAnimation(.snappy(duration: 0.25)) { model.density = density }
         }
         .onChange(of: services.location.coordinate) { _, coordinate in
             services.positionChanged(to: coordinate)

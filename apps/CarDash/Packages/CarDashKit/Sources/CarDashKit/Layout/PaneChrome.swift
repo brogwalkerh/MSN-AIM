@@ -19,9 +19,10 @@ struct PaneChrome<Content: View>: View {
     @ViewBuilder let content: Content
 
     @Environment(\.dashTheme) private var theme
+    @Environment(\.dashDensity) private var density
 
     private var shape: RoundedRectangle {
-        RoundedRectangle(cornerRadius: LayoutMetrics.paneCornerRadius, style: .continuous)
+        RoundedRectangle(cornerRadius: density.paneCornerRadius, style: .continuous)
     }
 
     var body: some View {

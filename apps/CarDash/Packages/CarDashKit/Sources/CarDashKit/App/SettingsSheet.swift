@@ -33,6 +33,22 @@ struct SettingsSheet: View {
                     Text("Automatic follows sunrise and sunset where you are, calculated on device — it keeps working with no signal.")
                 }
 
+                Section {
+                    Picker("Density", selection: Binding(
+                        get: { services.density },
+                        set: { services.density = $0 }
+                    )) {
+                        ForEach(DisplayDensity.allCases, id: \.self) { density in
+                            Text(density.title).tag(density)
+                        }
+                    }
+                    .pickerStyle(.segmented)
+                } header: {
+                    Text("Density")
+                } footer: {
+                    Text("\(services.density.blurb) Tiles resize as you change this — pick it with the phone in its mount, not in your hand.")
+                }
+
                 Section("Location") {
                     LabeledContent("Status", value: statusText)
                     if let coordinate = services.location.coordinate {
