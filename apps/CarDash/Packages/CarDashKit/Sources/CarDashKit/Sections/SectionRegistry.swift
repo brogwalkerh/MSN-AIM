@@ -78,23 +78,3 @@ public final class SectionRegistry {
         ]
     }
 }
-
-// MARK: - Sections still to be built
-//
-// Real descriptors rather than a special case in the registry, so the picker, the
-// minimum-size policy and the preset validation all treat them uniformly. Each is
-// replaced in place when its phase lands — Phone and Messages have been, and now live
-// next to their views like every other real section.
-
-enum YouTubeSection {
-    static var descriptor: SectionDescriptor {
-        .placeholder(
-            id: .youtube,
-            title: "YouTube",
-            systemImage: "play.rectangle.fill",
-            blurb: "Foreground only — audio stops when you leave the app.",
-            arrivesIn: "Phase 7",
-            capabilities: [.producesAudio, .needsNetwork, .singleton]
-        )
-    }
-}

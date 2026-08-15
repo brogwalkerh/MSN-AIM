@@ -1,4 +1,5 @@
 import SwiftUI
+import UIKit
 import UniformTypeIdentifiers
 import CarDashCore
 
@@ -8,7 +9,7 @@ enum MusicSection {
             id: .music,
             title: "Music",
             systemImage: "music.note",
-            blurb: "Spotify, your music library, and your own files.",
+            blurb: "Spotify, YouTube, your music library, and your own files.",
             capabilities: [.producesAudio, .singleton]
         ) { context in
             AnyView(MusicPaneView(context: context))
@@ -49,26 +50,54 @@ struct MusicPaneView: View {
         }
     }
 
+    /// Four sources and two buttons do not fit across a quarter-screen tile, so the sources
+    /// scroll and the two fixed buttons stay put. An `HStack` here silently squashes the
+    /// capsules until the labels are unreadable — which is worse than having to swipe.
     private var sourcePicker: some View {
         HStack(spacing: 6) {
-            ForEach([ProviderID.spotify, .appleMusic, .localFiles], id: \.self) { provider in
-                Button {
-                    audio.send(.switchTo(provider))
-                } label: {
-                    Text(provider.displayName)
-                        .font(DashFont.label(12))
-                        .padding(.horizontal, 10)
-                        .frame(height: 34)
-                        .background(
-                            audio.state.activeProvider == provider ? theme.accent : theme.tile,
-                            in: Capsule()
-                        )
-                        .foregroundStyle(
-                            audio.state.activeProvider == provider ? theme.background : theme.primaryText
-                        )
+            ScrollView(.horizontal, showsIndicators: false) {
+                HStack(spacing: 6) {
+                    ForEach([ProviderID.spotify, .youtube, .appleMusic, .localFiles], id: \.self) { provider in
+                        Button {
+                            audio.send(.switchTo(provider))
+                        } label: {
+                            Text(provider.displayName)
+                                .font(DashFont.label(12))
+                                .fixedSize()
+                                .padding(.horizontal, 10)
+                                .frame(height: 34)
+                                .background(
+                                    audio.state.activeProvider == provider ? theme.accent : theme.tile,
+                                    in: Capsule()
+                                )
+                                .foregroundStyle(
+                                    audio.state.activeProvider == provider ? theme.background : theme.primaryText
+                                )
+                        }
+                    }
                 }
             }
-            Spacer(minLength: 0)
+            .frame(height: 34)
+
+            // SiriusXM cannot be a source, and this button is the honest maximum.
+            //
+            // There is no public SiriusXM API and no third-party SDK; their streams are DRM'd
+            // and playable only inside their own app, and iOS gives no way to read or drive
+            // another app's playback. So this launches it — which does mean leaving the
+            // dashboard, and the tile does not pretend otherwise.
+            Button {
+                if let url = URL(string: "https://player.siriusxm.com") {
+                    UIApplication.shared.open(url)
+                }
+            } label: {
+                Text("SXM")
+                    .font(DashFont.label(11))
+                    .frame(width: 34, height: 34)
+                    .background(theme.tile, in: Circle())
+                    .foregroundStyle(theme.secondaryText)
+            }
+            .accessibilityLabel("Open SiriusXM — it can't be controlled from here")
+
             Button {
                 importing = true
             } label: {
@@ -87,6 +116,10 @@ struct MusicPaneView: View {
         switch audio.state.activeProvider {
         case .spotify:
             SpotifySourceView(provider: audio.spotify, audio: audio)
+        case .youtube:
+            // The same view the YouTube tile uses. Someone who has both on screen gets one
+            // player, not two competing web views.
+            YouTubePaneView(context: context)
         case .appleMusic:
             appleMusicLibrary
         default:
