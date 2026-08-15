@@ -216,6 +216,30 @@ public final class LayoutModel {
         }
     }
 
+    // MARK: - Transfer
+
+    public func document(_ id: UUID) -> LayoutDocument? {
+        documents.first { $0.id == id }
+    }
+
+    /// Reads a `.cardash` file into the library and selects it.
+    ///
+    /// The document arrives with a fresh identity and a name that does not collide — see
+    /// `LayoutTransfer.restore`. Selecting it immediately is deliberate: importing a layout and
+    /// then having to go and find it in the list is a step that serves nothing.
+    @discardableResult
+    public func importDocument(from data: Data) throws -> UUID {
+        let document = try LayoutTransfer.restore(
+            data,
+            existingNames: documents.map(\.name),
+            now: clock()
+        )
+        documents.append(document)
+        try? store.save(document)
+        selectDocument(document.id)
+        return document.id
+    }
+
     public func rename(_ id: UUID, to name: String) {
         let trimmed = name.trimmingCharacters(in: .whitespacesAndNewlines)
         guard !trimmed.isEmpty, let index = documents.firstIndex(where: { $0.id == id }) else {

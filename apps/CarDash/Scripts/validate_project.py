@@ -38,6 +38,8 @@ REQUIRED_INFO_KEYS = [
     "LSApplicationQueriesSchemes",
     "CFBundleURLTypes",
     "NSSupportsLiveActivities",
+    "UTExportedTypeDeclarations",
+    "CFBundleDocumentTypes",
 ]
 
 # Build settings whose values are paths relative to the project directory. A rename that

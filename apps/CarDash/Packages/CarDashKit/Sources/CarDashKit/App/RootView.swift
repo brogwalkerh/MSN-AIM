@@ -31,6 +31,27 @@ public struct RootView: View {
 
     public var body: some View {
         DashboardView(model: model, services: services)
+            // A .cardash file opened from Files, Mail or AirDrop arrives here. Without this
+            // the app is launched by the tap and then simply shows the dashboard, which
+            // looks like the file was ignored.
+            .onOpenURL { url in
+                guard url.isFileURL,
+                      url.pathExtension.caseInsensitiveCompare(LayoutTransfer.fileExtension)
+                        == .orderedSame
+                else { return }
+
+                let scoped = url.startAccessingSecurityScopedResource()
+                defer { if scoped { url.stopAccessingSecurityScopedResource() } }
+
+                do {
+                    try model.importDocument(from: try Data(contentsOf: url))
+                    Haptics.edit()
+                } catch let error as LayoutTransfer.ImportError {
+                    model.lastRefusal = error.userFacingMessage
+                } catch {
+                    model.lastRefusal = "That layout file couldn't be read."
+                }
+            }
     }
 }
 

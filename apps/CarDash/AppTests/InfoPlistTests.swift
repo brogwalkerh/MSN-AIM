@@ -104,6 +104,30 @@ struct InfoPlistTests {
         )
     }
 
+    // Without the exported type the share sheet has no name or icon for a .cardash file, and
+    // without the document type one cannot be opened from Files or AirDrop at all.
+    @Test("The layout file type is declared, and the app can open one")
+    func layoutFileType() throws {
+        let info = try info()
+        let identifier = "com.brogwalkerh.cardash.layout"
+
+        let exported = try #require(info["UTExportedTypeDeclarations"] as? [[String: Any]])
+        let declaration = try #require(exported.first { $0["UTTypeIdentifier"] as? String == identifier })
+
+        let tags = try #require(declaration["UTTypeTagSpecification"] as? [String: Any])
+        let extensions = try #require(tags["public.filename-extension"] as? [String])
+        #expect(extensions.contains("cardash"))
+
+        // Conforming to JSON is what lets a layout that has been through email — and had its
+        // UTI rewritten to something generic — still open.
+        let conforms = declaration["UTTypeConformsTo"] as? [String] ?? []
+        #expect(conforms.contains("public.json"))
+
+        let documents = try #require(info["CFBundleDocumentTypes"] as? [[String: Any]])
+        let handled = documents.flatMap { $0["LSItemContentTypes"] as? [String] ?? [] }
+        #expect(handled.contains(identifier))
+    }
+
     @Test("Build-setting substitutions in Info.plist actually expanded")
     func substitutionsExpanded() throws {
         let identifier = try #require(try info()["CFBundleIdentifier"] as? String)

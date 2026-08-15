@@ -101,6 +101,51 @@
 	<key>SpotifyClientID</key>
 	<string>$(SPOTIFY_CLIENT_ID)</string>
 
+	<!-- The .cardash layout file.
+	     Exported rather than imported, because this app defines the format. Without the
+	     declaration the type still resolves at runtime, but the share sheet has no name or
+	     icon for it and Files shows it as a generic document. It conforms to public.json
+	     so that a layout which has been through email or a chat app — and had its UTI
+	     rewritten to something generic — still opens. -->
+	<key>UTExportedTypeDeclarations</key>
+	<array>
+		<dict>
+			<key>UTTypeIdentifier</key>
+			<string>com.brogwalkerh.cardash.layout</string>
+			<key>UTTypeDescription</key>
+			<string>CarDash Layout</string>
+			<key>UTTypeConformsTo</key>
+			<array>
+				<string>public.json</string>
+			</array>
+			<key>UTTypeTagSpecification</key>
+			<dict>
+				<key>public.filename-extension</key>
+				<array>
+					<string>cardash</string>
+				</array>
+			</dict>
+		</dict>
+	</array>
+
+	<!-- Lets a layout be opened straight from Files, Mail or AirDrop rather than only
+	     through the importer inside the app. -->
+	<key>CFBundleDocumentTypes</key>
+	<array>
+		<dict>
+			<key>CFBundleTypeName</key>
+			<string>CarDash Layout</string>
+			<key>CFBundleTypeRole</key>
+			<string>Viewer</string>
+			<key>LSHandlerRank</key>
+			<string>Owner</string>
+			<key>LSItemContentTypes</key>
+			<array>
+				<string>com.brogwalkerh.cardash.layout</string>
+			</array>
+		</dict>
+	</array>
+
 	<key>CFBundleURLTypes</key>
 	<array>
 		<dict>
