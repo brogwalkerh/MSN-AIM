@@ -69,8 +69,15 @@ public struct DashboardView: View {
 
     // MARK: - Controls
 
+    /// The floating controls, top right.
+    ///
+    /// They sit over the canvas rather than in a bar of their own, because a permanent bar on a
+    /// landscape phone costs a strip of screen that the tiles need more. The consequence is that
+    /// they are always on top of *something* — usually the map — so they carry their own
+    /// background rather than relying on the tile behind them for contrast. Bare circles at
+    /// `theme.tile` (white at 6%) over a bright map are all but invisible.
     private var controls: some View {
-        HStack(spacing: 10) {
+        HStack(spacing: 8) {
             if model.isEditing, model.isShowingDerivedLayout {
                 Button("Reset portrait") {
                     model.resetPortraitVariant()
@@ -82,12 +89,17 @@ public struct DashboardView: View {
                 .background(theme.tile, in: Capsule())
             }
 
-            circularButton(systemImage: "gearshape", label: "Settings", isOn: showingSettings) {
-                showingSettings = true
-            }
+            // Hidden while rearranging. Neither is any use mid-rearrange, and dropping them
+            // takes the cluster from three buttons to one — which is exactly when the tile
+            // underneath needs the room for its own controls.
+            if !model.isEditing {
+                circularButton(systemImage: "gearshape", label: "Settings", isOn: showingSettings) {
+                    showingSettings = true
+                }
 
-            circularButton(systemImage: "square.grid.2x2", label: "Layouts", isOn: showingLibrary) {
-                showingLibrary = true
+                circularButton(systemImage: "square.grid.2x2", label: "Layouts", isOn: showingLibrary) {
+                    showingLibrary = true
+                }
             }
 
             if services.location.isDriving {
@@ -111,6 +123,10 @@ public struct DashboardView: View {
                 }
             }
         }
+        .padding(5)
+        .background(theme.background.opacity(0.78), in: Capsule())
+        .overlay(Capsule().strokeBorder(theme.tileStroke))
+        .animation(.snappy(duration: 0.2), value: model.isEditing)
     }
 
     private func circularButton(
