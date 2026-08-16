@@ -17,3 +17,8 @@ apps/**/.swiftpm/
 apps/**/xcuserdata/
 apps/**/*.xcuserdatad
 apps/**/Secrets.xcconfig
+# Xcode writes this inside the .xcodeproj the first time the project is opened. It holds
+# per-machine workspace state, not project structure, and showing up as untracked in every
+# `git status` makes real changes harder to see.
+apps/**/*.xcodeproj/project.xcworkspace/
+apps/**/*.xcodeproj/xcshareddata/swiftpm/

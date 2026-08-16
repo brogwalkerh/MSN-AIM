@@ -81,7 +81,7 @@ public final class RouteService {
         lastRouteRequest = Date()
 
         let request = MKDirections.Request()
-        request.source = MKMapItem(placemark: MKPlacemark(coordinate: origin.clCoordinate))
+        request.source = origin.mapItem
         request.destination = destination
         request.transportType = .automobile
         request.requestsAlternateRoutes = false

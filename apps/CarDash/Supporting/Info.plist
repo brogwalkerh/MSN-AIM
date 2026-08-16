@@ -128,6 +128,13 @@
 		</dict>
 	</array>
 
+	<!-- In place, meaning the file is read where it sits rather than copied into the
+	     app's Inbox first. Declaring an opening capability without this is a build
+	     warning, and the copying alternative would leave a stack of abandoned .cardash
+	     files in the container: importing reads the bytes and never writes. -->
+	<key>LSSupportsOpeningDocumentsInPlace</key>
+	<true/>
+
 	<!-- Lets a layout be opened straight from Files, Mail or AirDrop rather than only
 	     through the importer inside the app. -->
 	<key>CFBundleDocumentTypes</key>

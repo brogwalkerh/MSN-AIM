@@ -126,6 +126,11 @@ struct InfoPlistTests {
         let documents = try #require(info["CFBundleDocumentTypes"] as? [[String: Any]])
         let handled = documents.flatMap { $0["LSItemContentTypes"] as? [String] ?? [] }
         #expect(handled.contains(identifier))
+
+        // Read where it sits rather than copied into the app's Inbox. Importing reads the
+        // bytes and never writes, so copying would only leave abandoned files in the
+        // container — and omitting the declaration entirely is a build warning.
+        #expect(info["LSSupportsOpeningDocumentsInPlace"] as? Bool == true)
     }
 
     @Test("Build-setting substitutions in Info.plist actually expanded")

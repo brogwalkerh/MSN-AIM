@@ -1,3 +1,4 @@
+import CoreLocation
 import MapKit
 import CarDashCore
 
@@ -11,6 +12,20 @@ extension Coordinate {
 
     public var clCoordinate: CLLocationCoordinate2D {
         CLLocationCoordinate2D(latitude: latitude, longitude: longitude)
+    }
+
+    /// A map item for a bare coordinate — somewhere with a position and no address.
+    ///
+    /// `MKMapItem(placemark:)` was the way to do this, and `MKPlacemark` went with it; both
+    /// are deprecated as of iOS 26 in favour of a location and an optional `MKAddress`. Nil is
+    /// the honest address here: this is the driver's own position, which is a fix rather than
+    /// a place, and inventing a reverse-geocoded label for it would be a network round trip
+    /// for something nothing displays.
+    var mapItem: MKMapItem {
+        MKMapItem(
+            location: CLLocation(latitude: latitude, longitude: longitude),
+            address: nil
+        )
     }
 }
 

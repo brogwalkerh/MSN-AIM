@@ -185,7 +185,7 @@ struct MapPaneView: View {
 
     private func openInAppleMaps() {
         guard let coordinate = location.coordinate else { return }
-        let item = MKMapItem(placemark: MKPlacemark(coordinate: coordinate.clCoordinate))
+        let item = coordinate.mapItem
         item.name = route.destinationName
         item.openInMaps(launchOptions: [
             MKLaunchOptionsDirectionsModeKey: MKLaunchOptionsDirectionsModeDriving

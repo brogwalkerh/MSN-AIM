@@ -259,10 +259,18 @@ public final class SpotifyAuthService {
 private final class AuthPresentationAnchor: NSObject, ASWebAuthenticationPresentationContextProviding {
     func presentationAnchor(for session: ASWebAuthenticationSession) -> ASPresentationAnchor {
         MainActor.assumeIsolated {
-            let scene = UIApplication.shared.connectedScenes
-                .compactMap { $0 as? UIWindowScene }
-                .first { $0.activationState == .foregroundActive }
-            return scene?.keyWindow ?? ASPresentationAnchor()
+            let scenes = UIApplication.shared.connectedScenes.compactMap { $0 as? UIWindowScene }
+            // Prefer the active scene, but take any window scene over none: during a
+            // transition there may be no foreground-active one for a moment.
+            guard let scene = scenes.first(where: { $0.activationState == .foregroundActive })
+                    ?? scenes.first
+            else {
+                // Unreachable in practice — an app with no window scene cannot present a
+                // sheet at all. `UIWindow()` would be the obvious placeholder and is
+                // deprecated as of iOS 26 for exactly this reason: a window with no scene.
+                return UIWindow(frame: .zero)
+            }
+            return scene.keyWindow ?? UIWindow(windowScene: scene)
         }
     }
 }
