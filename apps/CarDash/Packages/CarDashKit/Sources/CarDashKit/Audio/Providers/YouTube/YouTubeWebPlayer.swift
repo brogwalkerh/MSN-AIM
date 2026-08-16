@@ -194,7 +194,11 @@ extension YouTubeWebPlayer: WKNavigationDelegate {
     /// Without this, tapping the video title or a suggested video navigates the tile to the full
     /// YouTube site, which is a browser inside a dashboard — unusable while driving and not what
     /// anyone asked for. Those taps open the real app instead.
-    nonisolated func webView(
+    /// Main-actor isolated, inherited from the class. It was `nonisolated` at first, which
+    /// compiles and then warns: `WKNavigationAction`'s own properties are main-actor isolated,
+    /// so reading `navigationType` from a nonisolated context is exactly the thing Swift 6
+    /// concurrency exists to catch.
+    func webView(
         _ webView: WKWebView,
         decidePolicyFor navigationAction: WKNavigationAction,
         decisionHandler: @escaping (WKNavigationActionPolicy) -> Void
@@ -205,8 +209,6 @@ extension YouTubeWebPlayer: WKNavigationDelegate {
             return
         }
         decisionHandler(.cancel)
-        MainActor.assumeIsolated {
-            UIApplication.shared.open(url)
-        }
+        UIApplication.shared.open(url)
     }
 }

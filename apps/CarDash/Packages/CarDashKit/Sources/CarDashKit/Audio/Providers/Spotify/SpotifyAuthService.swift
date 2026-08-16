@@ -265,12 +265,24 @@ private final class AuthPresentationAnchor: NSObject, ASWebAuthenticationPresent
             guard let scene = scenes.first(where: { $0.activationState == .foregroundActive })
                     ?? scenes.first
             else {
-                // Unreachable in practice — an app with no window scene cannot present a
-                // sheet at all. `UIWindow()` would be the obvious placeholder and is
-                // deprecated as of iOS 26 for exactly this reason: a window with no scene.
-                return UIWindow(frame: .zero)
+                return Self.windowWithNoScene()
             }
             return scene.keyWindow ?? UIWindow(windowScene: scene)
         }
+    }
+
+    /// A window belonging to no scene, for a branch that cannot happen.
+    ///
+    /// `presentationAnchor(for:)` must return something, and if the app has no window scene at
+    /// all there is nothing to return — it also cannot be presenting a sheet, so this is
+    /// unreachable. Every way of making a scene-less `UIWindow` is deprecated as of iOS 26,
+    /// which is the point: a window with no scene is not a useful object.
+    ///
+    /// Marked deprecated itself so the compiler stops warning about the call inside. That is
+    /// the intended way to say "yes, I know" — and unlike disabling the warning globally, it
+    /// keeps every *other* deprecated use visible.
+    @available(iOS, deprecated: 26.0, message: "Unreachable fallback for a scene-less app.")
+    private static func windowWithNoScene() -> UIWindow {
+        UIWindow(frame: .zero)
     }
 }
